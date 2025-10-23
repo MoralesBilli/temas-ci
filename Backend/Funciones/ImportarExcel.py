@@ -1,5 +1,5 @@
 import pandas as pd
-
+from Exteniones import db
 
 #Lectura del archivo excel
 def importar(archivo,carreras,materias):
@@ -9,8 +9,8 @@ def importar(archivo,carreras,materias):
     columnas_numerica = ["Semestre","Unidad", "No_Faltas","Calificacion"]
     columnas_existentes = ["Carreras","Materia"]
     lista_informacion = {"Carreras":carreras, "Materia": materias}
-
-    for hoja in hojas:
+    try:
+     for hoja in hojas:
         df =archivo.parse(hoja)
         df.columns = df.columns.str.strip() #quita los espacios de las celdas
         
@@ -52,5 +52,23 @@ def importar(archivo,carreras,materias):
 
         contenido[hoja] = df
         print(df)
-    
-    return contenido
+    except Exception as e:
+        return f'Error al importar el archivo: {str(e)}'
+    resultado = Guardar_Datos(contenido)
+    return resultado
+
+
+def Guardar_Datos(datos):
+    try:
+        if isinstance(datos,dict):
+
+            for hoja, df in  datos.items():
+                for _,fila in df.iterrows():
+                    #guardado enla base de datos faltan los modelos
+
+                    nuevo_registro = 'nuevo'
+            return "Guardado correctamente"
+        else:
+            return datos
+    except Exception as e:
+        return f'No se guardaron los datos {str(e)}'
