@@ -1,0 +1,8 @@
+flask=3.0.0
+flask-sqlalchemy==3.1.1
+
+#manejo de archivos
+pandas==2.2.3
+
+#manjo base de datos
+sqlalchemy==2.0.41  
