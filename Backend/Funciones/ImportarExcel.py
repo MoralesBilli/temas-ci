@@ -1,5 +1,6 @@
 import pandas as pd
 from Exteniones import db
+from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones
 
 #Lectura del archivo excel
 def importar(archivo,carreras,materias):
@@ -9,6 +10,7 @@ def importar(archivo,carreras,materias):
     columnas_numerica = ["Semestre","Unidad", "No_Faltas","Calificacion"]
     columnas_existentes = ["Carreras","Materia"]
     lista_informacion = {"Carreras":carreras, "Materia": materias}
+
     try:
      for hoja in hojas:
         df =archivo.parse(hoja)
@@ -54,19 +56,59 @@ def importar(archivo,carreras,materias):
         print(df)
     except Exception as e:
         return f'Error al importar el archivo: {str(e)}'
-    resultado = Guardar_Datos(contenido)
+    resultado = Guardar_Datos_grupos(contenido)
     return resultado
 
 
-def Guardar_Datos(datos):
+def imprtar_grupos(arcvhivo,carreras):
+    archivo = pd.ExcelFile(f'{archivo}')
+    hojas = archivo.sheet_names
+    contenido = {}
+
+    try:
+     for hoja in hojas:
+        df =archivo.parse(hoja)
+        df.columns = df.columns.str.strip() #quita los espacios de las celdas
+        
+
+        #Detecta valores nulos
+        if df.isnull().values.any():
+            return "No se pudo importar, datos nulos"
+        
+        #Detecta valores vacios
+        if (df.astype(str).apply(lambda x: x.str.strip() == "")).values.any():
+            return "No se pudo importar, datos vacíos "
+        
+        
+    except Exception as e:
+        return f'Error al importar el archivo: {str(e)}'
+    resultado = Guardar_Datos_grupos(contenido)
+    return resultado
+    
+
+def Guardar_Datos_grupos(datos):
     try:
         if isinstance(datos,dict):
+            carreras = {carrera.nombre: carrera.id_carrera for carrera in Carreras.query.all()}
 
             for hoja, df in  datos.items():
                 for _,fila in df.iterrows():
+                    nombre_carrera = fila["Carreras"]
+                    id_carrera = carreras.get(nombre_carrera)
                     #guardado enla base de datos faltan los modelos
+                    
+                    nuevo_alumno = Alumnos(
+                        no_control=fila["No_Control"],
+                        nombre=fila["Nombre"],
+                        apellido_paterno=fila["Apellido_Paterno"],
+                        apellido_materno=fila["Apellido_Materno"],
+                        estado="Activo",
+                        semestre =fila["Semestre"],
+                        id_carrera=id_carrera
+                    )
+                    db.session.add(nuevo_alumno)
 
-                    nuevo_registro = 'nuevo'
+            db.session.commit()
             return "Guardado correctamente"
         else:
             return datos
