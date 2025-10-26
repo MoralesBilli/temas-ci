@@ -1,4 +1,4 @@
-from Exteniones import db
+from Backend.Extensiones import db
 
 # --- Definición de Tipos ENUM ---
 modalidad_enum = db.Enum('PRESENCIAL', 'SEMIPRESENCIAL', name='modalidad')
@@ -37,20 +37,23 @@ class Alumnos(db.Model):
     # Vínculo bidireccional 
     # (alumno.carrera) y (carrera.alumnos)
     carrera = db.relationship('Carreras', backref='alumnos')
+    
 
     def to_dict(self):
         return {
-            'no_control': self.no_control,
+            'numeroDeControl': self.no_control,
             'nombre': self.nombre,
-            'apellido_paterno': self.apellido_paterno,
-            'apellido_materno': self.apellido_materno,
+            'apellidoPaterno': self.apellido_paterno,
+            'apellidoMaterno': self.apellido_materno,
             'genero': self.genero,
             'estado': self.estado,
             'semestre': self.semestre,
             'id_carrera': self.id_carrera,
             
             # nombre de carrera
-            'nombre_carrera': self.carrera.nombre if self.carrera else None 
+            'nombre_carrera': self.carrera.nombre if self.carrera else None ,
+            'factores_de_riesgo': [{'id_factor':factor.id, 'nombre':factor.nombre}for factor in self.factores_de_riesgo]
+            
         }
 
 class Materias(db.Model):

@@ -1,4 +1,4 @@
-from Exteniones import db
+from Backend.Extensiones import db
 from flask import Blueprint, jsonify,request
 from Funciones.ImportarExcel import importar, Guardar_Datos
 

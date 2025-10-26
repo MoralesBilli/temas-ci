@@ -1,5 +1,5 @@
 import pandas as pd
-from Exteniones import db
+from Backend.Extensiones import db
 from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones
 
 #Lectura del archivo excel
