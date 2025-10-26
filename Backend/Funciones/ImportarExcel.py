@@ -1,5 +1,5 @@
 import pandas as pd
-from Backend.Extensiones import db
+from Extensiones import db
 from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones
 
 #Lectura del archivo excel
@@ -79,7 +79,7 @@ def imprtar_grupos(arcvhivo,carreras):
         if (df.astype(str).apply(lambda x: x.str.strip() == "")).values.any():
             return "No se pudo importar, datos vacíos "
         
-        
+
     except Exception as e:
         return f'Error al importar el archivo: {str(e)}'
     resultado = Guardar_Datos_grupos(contenido)
