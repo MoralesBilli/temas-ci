@@ -22,3 +22,53 @@ def obtener_alumnos_factores():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({'ERROR': f'Error al cargar los alumnos: {str(e)}'}), 500
+
+
+
+@Alumnos_bp.route('/api/alumno_detalle/<no_control>', methods=['GET'])
+def obtener_alumno_detalle(no_control):
+    try:
+        alumno = Alumnos.query.filter_by(no_control=no_control).first()
+        if not alumno:
+            return jsonify({'ERROR': 'Alumno no encontrado'}), 404
+
+        resultado = {
+            "numeroDeControl": alumno.no_control,
+            "nombre": alumno.nombre,
+            "apellidoPaterno": alumno.apellido_paterno,
+            "apellidoMaterno": alumno.apellido_materno,
+            "genero": alumno.genero,
+            "estado": alumno.estado,
+            "semestre": alumno.semestre,
+            "nombreCarrera": alumno.carrera.nombre if alumno.carrera else None,
+            "modalidadCarrera": alumno.carrera.modalidad if alumno.carrera else None,
+            "factoresDeRiesgo": [f.factor.nombre for f in alumno.factores_de_riesgo],
+            "inscripciones": []
+        }
+
+        # Recorrer inscripciones
+        for inscripcion in alumno.inscripciones:
+            grupo = inscripcion.grupo
+            materia = grupo.materia if grupo else None
+
+            ins = {
+                "grupo": grupo.grupo if grupo else None,
+                "nombreMateria": materia.nombre if materia else None,
+                "serieMateria": materia.serie if materia else None,
+                "calificaciones": []
+            }
+
+            # Calificaciones de esa inscripción
+            for cal in inscripcion.calificaciones:
+                ins['calificaciones'].append({
+                    "unidad": cal.unidad,
+                    "calificacion": cal.calificacion,
+                    "faltas": cal.faltas
+                })
+
+            resultado['inscripciones'].append(ins)
+
+        return jsonify(resultado)
+
+    except Exception as e:
+        return jsonify({'ERROR': f'Error al cargar el alumno: {str(e)}'}), 500
