@@ -66,91 +66,94 @@ def importar_calificaciones(archivo,grupos):
 
 
 def importar_grupos(archivo,carreras,grupos):
-    ArchivoEx = pd.ExcelFile(f'{archivo}')
-    hojas = ArchivoEx.sheet_names
+    
     contenido = {}
-    lista_informacion = {"Carreras":carreras, "Grupos": grupos}
-    columnas_existentes = ["Carreras","Grupos"]
+    lista_informacion = {"Carrera":carreras, "Grupo": grupos}
+    columnas_existentes = ["Carrera","Grupo"]
     Genero = ['HOMBRE','MUJER']
     Estado_valido = ['VIGENTE', 'EGRESADO', 'BAJA_TEMPORAL', 'BAJA_DEFINITIVA']
     patron_no_control = r'^(?:\d{8}|[CMD]\d{8})$'
     patron_nombre = r'^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$'
 
     try:
-        for hoja in hojas:
-            df =ArchivoEx.parse(hoja)
-            
-            
+        with pd.ExcelFile(archivo) as ArchivoEx:
+            hojas = ArchivoEx.sheet_names
 
-            #Detecta valores nulos
-            if df.isnull().values.any():
-                return "No se pudo importar, datos nulos"
-            
-            #Detecta valores vacios
-            if (df.astype(str).apply(lambda x: x.str.strip() == "")).values.any():
-                return "No se pudo importar, datos vacíos "
-            
-            #Revisa que las materias y el grupo sea valido
-            for coex in columnas_existentes:
-                if coex in df.columns:
-                    invalidas = ~df[coex].isin(lista_informacion[coex])
-                    if coex == "Carreras" and invalidas.any():
-                        return "No se pudo importar: carrera no encontrada"
-                    elif coex == "Grupos" and invalidas.any():
-                        return "No se pudo importar: grupo no encontrado"
-
-                    
-            #Revisa que el semestre sea numero
-            if "Semestre" in df.columns:
-                no_numericos = df[~df["Semestre"].astype(str).str.isnumeric()]
-                if not no_numericos.empty:
-                        return "No se pudo importar, datos no numéricos en 'Semestre'"
+            for hoja in hojas:
+                df =ArchivoEx.parse(hoja)
                 
-                if (df["Semestre"].astype(int) > 17).any() or (df["Semestre"].astype(int) < 1).any():
-                            return "No se pudo importar: hay semestres inválidos"
                 
-            #Revisa si existe un genero valido
-            if 'Genero' in df.columns:
-                if not df["Genero"].isin(Genero).all():
-                    return "No se pudo importar: hay un género no válido"
+
+                #Detecta valores nulos
+                if df.isnull().values.any():
+                    return "No se pudo importar, datos nulos"
                 
-            #Revisa que los estados sean validos
-            if 'Estado' in df.columns:
+                #Detecta valores vacios
+                if (df.astype(str).apply(lambda x: x.str.strip() == "")).values.any():
+                    return "No se pudo importar, datos vacíos "
                 
-                if not df['Estado'].isin(Estado_valido).all():
-                    return "No se pudo importar: hay un estado invalido"
+                #Revisa que las materias y el grupo sea valido
+                for coex in columnas_existentes:
+                    if coex in df.columns:
+                        invalidas = ~df[coex].isin(lista_informacion[coex])
+                        if coex == "Carrera" and invalidas.any():
+                            return "No se pudo importar: carrera no encontrada"
+                        elif coex == "Grupo" and invalidas.any():
+                            return "No se pudo importar: grupo no encontrado"
 
-            if 'No_Control' in df.columns:
-            
-                if not df['No_Control'].astype(str).str.match(patron_no_control).all():
-                    return "No se pudo importar: hay números de control con formato inválido"
-            
-                if df['No_Control'].duplicated().any():
-                    return "No se pudo importar: hay números de control repetidos"
-
-
-            for col in ["Nombre", "Apellido_Paterno", "Apellido_Materno"]:
-                    if col in df.columns:
-                        if ~df[col].astype(str).str.match(patron_nombre).all():
-                            return f"No se pudo importar: hay valores inválidos en '{col}'"
                         
-            limites = {
-                    'Nombre': 40,
-                    'Apellido_Paterno': 40,
-                    'Apellido_Materno': 40
-                }
-            
-            for campo, max_len in limites.items():
-                    if campo in df.columns:
-                        if df[campo].astype(str).apply(len).gt(max_len).any():
-                            return f"No se pudo importar: hay valores demasiado largos en '{campo}' (máx. {max_len} caracteres)"
+                #Revisa que el semestre sea numero
+                if "Semestre" in df.columns:
+                    no_numericos = df[~df["Semestre"].astype(str).str.isnumeric()]
+                    if not no_numericos.empty:
+                            return "No se pudo importar, datos no numéricos en 'Semestre'"
+                    
+                    if (df["Semestre"].astype(int) > 17).any() or (df["Semestre"].astype(int) < 1).any():
+                                return "No se pudo importar: hay semestres inválidos"
+                    
+                #Revisa si existe un genero valido
+                if 'Genero' in df.columns:
+                    if not df["Genero"].isin(Genero).all():
+                        return "No se pudo importar: hay un género no válido"
+                    
+                #Revisa que los estados sean validos
+                if 'Estado' in df.columns:
+                    
+                    if not df['Estado'].isin(Estado_valido).all():
+                        return "No se pudo importar: hay un estado invalido"
 
-            contenido[hoja] = df
+                if 'No_Control' in df.columns:
+                
+                    if not df['No_Control'].astype(str).str.match(patron_no_control).all():
+                        return "No se pudo importar: hay números de control con formato inválido"
+                
+                    if df['No_Control'].duplicated().any():
+                        return "No se pudo importar: hay números de control repetidos"
+
+
+                for col in ["Nombre", "Apellido_Paterno", "Apellido_Materno"]:
+                        if col in df.columns:
+                            if ~df[col].astype(str).str.match(patron_nombre).all():
+                                return f"No se pudo importar: hay valores inválidos en '{col}'"
+                            
+                limites = {
+                        'Nombre': 40,
+                        'Apellido_Paterno': 40,
+                        'Apellido_Materno': 40
+                    }
+                
+                for campo, max_len in limites.items():
+                        if campo in df.columns:
+                            if df[campo].astype(str).apply(len).gt(max_len).any():
+                                return f"No se pudo importar: hay valores demasiado largos en '{campo}' (máx. {max_len} caracteres)"
+
+                contenido[hoja] = df
 
     except Exception as e:
         return f'Error al importar el archivo: {str(e)}'
     
     resultado = Guardar_Datos_grupos(contenido)
+    
     return resultado
     
 def guardar_calificaciones(datos):
@@ -197,8 +200,8 @@ def guardar_calificaciones(datos):
 
 
             db.session.commit()
+            print('guardadas')
             return "Calificaciones guardadas correctamente"
-
 
         else:
             return datos
@@ -210,46 +213,64 @@ def guardar_calificaciones(datos):
 def Guardar_Datos_grupos(datos):
     try:
         if isinstance(datos,dict):
-            carreras = {carrera.nombre: carrera.id_carrera for carrera in Carreras.query.all()}
+            
+            carreras = {carrera.nombre: carrera.id for carrera in Carreras.query.all()}
             grupos = {grupo.grupo: grupo.id for grupo in Grupos.query.all()}
-
+            cambios = False
+            
             for hoja, df in  datos.items():
+               
                 for _,fila in df.iterrows():
-                    nombre_carrera = fila["Carreras"]
+                    
+
+                    nombre_carrera = fila["Carrera"]
                     id_carrera = carreras.get(nombre_carrera)
-                    nombre_grupo = fila["Grupos"]
+                    nombre_grupo = fila["Grupo"]
                     id_grupo = grupos.get(nombre_grupo)
+               
                     #guardado enla base de datos faltan los modelos
-                    if not Alumnos.query.get(fila["No_Control"]):
+                    no_control = str(fila["No_Control"]).strip()
+                    semestre_valido = str(int(fila["Semestre"]))
+
+                    if not Alumnos.query.get(no_control):
+
                         nuevo_alumno = Alumnos(
-                            no_control=fila["No_Control"],
+                            no_control=no_control,
                             nombre=fila["Nombre"],
                             apellido_paterno=fila["Apellido_Paterno"],
                             apellido_materno=fila["Apellido_Materno"],
                             genero = fila['Genero'],
                             estado=fila['Estado'],
-                            semestre =fila["Semestre"],
+                            semestre = semestre_valido,
                             id_carrera=id_carrera
                         )
                         db.session.add(nuevo_alumno)
+                        cambios = True
                        
+                   
 
                     inscripcion_existente = Inscripciones.query.filter_by(
                         id_grupo=id_grupo,
-                        no_control_alumno=fila["No_Control"]
+                        no_control_alumno=no_control
                     ).first()
+
+                   
                     if not inscripcion_existente:
                             nueva_inscripcion = Inscripciones(
                                 id_grupo = id_grupo,
-                                no_control_alumno = fila["No_Control"]
+                                no_control_alumno = no_control
                             )
                             db.session.add(nueva_inscripcion)
+                            cambios = True
+            if cambios:     
+                db.session.commit()
+                return "Guardado correctamente"
+            else:
+                return "Datos previamente guardados"
 
-            db.session.commit()
-
-            return "Guardado correctamente"
+            
         else:
             return datos
     except Exception as e:
         db.session.rollback()
-        return f'No se guardaron los datos {str(e)}'
+        return f'No se pudo importar, error al guardar losdatos {str(e)}'

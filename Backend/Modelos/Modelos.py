@@ -4,6 +4,7 @@ from Extensiones import db
 modalidad_enum = db.Enum('PRESENCIAL', 'SEMIPRESENCIAL', name='modalidad')
 genero_enum = db.Enum('HOMBRE', 'MUJER', name='genero')
 estado_alumno_enum = db.Enum('VIGENTE', 'EGRESADO', 'BAJA_TEMPORAL', 'BAJA_DEFINITIVA', name='estado_alumno')
+semestre = db.Enum('1','2','3','4','5','6','7','8','9','10','11','12', name='semestres')
 
 # --- Modelo Carreras ---
 
@@ -30,7 +31,7 @@ class Alumnos(db.Model):
     apellido_materno = db.Column(db.String(64))
     genero = db.Column(genero_enum, nullable=False) 
     estado = db.Column(estado_alumno_enum, nullable=False)
-    semestre = db.Column(db.Integer, nullable=False)
+    semestre = db.Column(semestre, nullable=False)
     
     id_carrera = db.Column(db.Integer, db.ForeignKey('carreras.id'), nullable=False)
 

@@ -38,12 +38,13 @@ def importar_Excel_grupos():
 
         procesamiento = importar_grupos(ruta,carreras_nombres,grupos_nombres)
        
-
+        print(procesamiento)
         os.remove(ruta)
 
         if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
             return jsonify({'error': procesamiento}), 400
-        return jsonify({'mensaje': 'Archivo procesado correctamente', 'resultado': procesamiento})
+        
+        return jsonify({'message': 'Archivo procesado correctamente', 'resultado': procesamiento}),200
     except Exception  as e:
         return jsonify({'error': f'Error al importar el archivo {str(e)}'}),400
 
