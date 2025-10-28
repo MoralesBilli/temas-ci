@@ -157,9 +157,10 @@ class Calificaciones(db.Model):
     calificacion = db.Column(db.Integer, nullable=False)
     faltas = db.Column(db.Integer, nullable=False)
     id_inscripcion = db.Column(db.Integer, db.ForeignKey('inscripciones.id'), nullable=False)
-
+    id_materia = db.Column(db.Integer, db.ForeignKey('materias.id'), nullable=False)
     # Relación
     inscripcion = db.relationship('Inscripciones', backref='calificaciones')
+    materia =db.relationship('Materia', backref='materias')
     
     # --- AÑADIDO ---
     # Método 'to_dict' faltante

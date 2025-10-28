@@ -1,15 +1,15 @@
 import pandas as pd
 from Extensiones import db
-from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Grupos
+from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Grupos,Materias
 import re
 
 #Lectura del archivo excel
-def importar_calificaciones(archivo,grupos):
+def importar_calificaciones(archivo,grupos,materias):
     
     contenido = {}
     columnas_numerica = ["Unidad", "No_Faltas","Calificacion"]
     patron_no_control = r'^(?:\d{8}|[CMD]\d{8})$'
-    lista_informacion = {"Grupo": grupos}
+    lista_informacion = {"Grupo": grupos, "Materia":materias}
 
 
     try:
@@ -41,7 +41,7 @@ def importar_calificaciones(archivo,grupos):
                             
                         invalidas = ~df[coex].isin(lista_informacion[coex])
                         if invalidas.any():
-                            return "No se pudo importar, grupo no encontrada"
+                            return "No se pudo importar, grupo o materia no encontrada"
                     
                     
                 #Validar que el campo unidad, calificacion y No.Faltas sea solamente numeros
@@ -163,11 +163,19 @@ def guardar_calificaciones(datos):
     try:
         if isinstance(datos,dict):
             grupos = {grupo.grupo: grupo.id for grupo in Grupos.query.all()}
+            materias = {materia.nombre: materia.id for materia in Materias.query.all()}
+
             for hoja, df in datos.items():
                 nombre_grupo = df["Grupo"].iloc[0]
                 id_grupo = grupos.get(nombre_grupo)
+                nombre_materia = df["Materia"].iloc[0]
+                id_materia=materias.get(nombre_materia)
+
                 if id_grupo is None:
                     return f"Grupo '{nombre_grupo}' no encontrado en la base de datos"
+                
+                if id_materia is None:
+                    return f"Grupo '{nombre_materia}' no encontrado en la base de datos"
             
             inscripciones = Inscripciones.query.filter_by(id_grupo=id_grupo).all()
             inscripciones_dict = {inc.no_control_alumno: inc.id for inc in inscripciones}
@@ -175,6 +183,7 @@ def guardar_calificaciones(datos):
             for _, fila in df.iterrows():
                 no_control = fila["No_Control"]
                 unidad = int(fila["Unidad"])
+                materia = fila["Materia"]
                 id_inscripcion = inscripciones_dict.get(no_control)
 
                 if id_inscripcion is None:
@@ -182,21 +191,24 @@ def guardar_calificaciones(datos):
                 
                 calificacion_existente = Calificaciones.query.filter_by(
                     id_inscripcion=id_inscripcion,
-                    unidad=unidad
+                    unidad=unidad,
+                    materia = materia
                 ).first()
 
                 if calificacion_existente:
                     # Actualizar campos
                     calificacion_existente.calificacion = fila["Calificacion"]
                     calificacion_existente.no_faltas = fila["No_Faltas"]
-                    calificacion_existente.no_asistencia = fila["No_Asistencia"]
+                    
                 else:
                     # Crear nueva calificación
                     nueva_calificacion = Calificaciones(
                         id_inscripcion=id_inscripcion,
                         unidad=unidad,
                         calificacion=fila["Calificacion"],
-                        no_faltas=fila["No_Faltas"]
+                        no_faltas=fila["No_Faltas"],
+                        materia = materia
+                        
                     )
                     db.session.add(nueva_calificacion)
 

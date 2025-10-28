@@ -1,7 +1,7 @@
 from Extensiones import db
 from flask import Blueprint, jsonify,request
 from Funciones.ImportarExcel import importar_grupos,importar_calificaciones
-from Modelos.Modelos import Grupos, Carreras
+from Modelos.Modelos import Grupos, Carreras,Materias
 import os
 
 Import_export_bp = Blueprint('Import_export',__name__)
@@ -55,6 +55,8 @@ def importar_Excel_Calificaciones():
         UPLOAD_FOLDER = 'calificacion'
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         grupos = Grupos.query.all()
+        materias = Materias.query.all()
+        materias_nombres = [materia.nombre for materia in materias]
         grupos_nombres = [grupo.grupo for grupo in grupos]
         #validaciones 
         if 'archivo' not in request.files:
@@ -72,7 +74,7 @@ def importar_Excel_Calificaciones():
         ruta = os.path.join(UPLOAD_FOLDER, archivo.filename)
         archivo.save(ruta)
 
-        procesamiento =  importar_calificaciones(ruta,grupos_nombres)
+        procesamiento =  importar_calificaciones(ruta,grupos_nombres,materias_nombres)
        
 
         os.remove(ruta)
