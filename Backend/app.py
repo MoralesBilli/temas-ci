@@ -1,11 +1,13 @@
 from flask import Flask
 from Extensiones import db
 from Rutas.Rutas import blueprints
-
+from dotenv import load_dotenv
+import os
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://postgres:adnatfhso4@localhost/ExamenU2'
+load_dotenv()
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL') 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
