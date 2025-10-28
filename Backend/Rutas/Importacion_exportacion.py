@@ -54,7 +54,8 @@ def importar_Excel_Calificaciones():
     try:
         UPLOAD_FOLDER = 'calificacion'
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
+        grupos = Grupos.query.all()
+        grupos_nombres = [grupo.grupo for grupo in grupos]
         #validaciones 
         if 'archivo' not in request.files:
             return jsonify({'error': 'No fue enviaddo un archivo'}),400
@@ -71,7 +72,7 @@ def importar_Excel_Calificaciones():
         ruta = os.path.join(UPLOAD_FOLDER, archivo.filename)
         archivo.save(ruta)
 
-        procesamiento = importar_calificaciones(ruta)
+        procesamiento =  importar_calificaciones(ruta,grupos_nombres)
        
 
         os.remove(ruta)

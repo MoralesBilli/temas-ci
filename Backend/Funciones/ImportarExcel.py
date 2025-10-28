@@ -5,62 +5,65 @@ import re
 
 #Lectura del archivo excel
 def importar_calificaciones(archivo,grupos):
-    archivo = pd.ExcelFile(f'{archivo}')
-    hojas = archivo.sheet_names
+    
     contenido = {}
-    columnas_numerica = ["Unidad", "No_Faltas","Calificacion","No_Asistencia"]
+    columnas_numerica = ["Unidad", "No_Faltas","Calificacion"]
     patron_no_control = r'^(?:\d{8}|[CMD]\d{8})$'
     lista_informacion = {"Grupo": grupos}
 
 
     try:
-     for hoja in hojas:
-        df =archivo.parse(hoja)
-        df.columns = df.columns.str.strip() #quita los espacios de las celdas
-        
-         #Revisa que existan columnas 
-        faltantes = [c for c in ["Grupos"] + columnas_numerica if c not in df.columns]
-        if faltantes:
-            return f"No se pudo importar, columnas faltantes, o error de escritura: {', '.join(faltantes)}"
-        
-        #Detecta valores nulos
-        if df.isnull().values.any():
-            return "No se pudo importar, datos nulos"
-        
-        #Detecta valores vacios
-        if (df.astype(str).apply(lambda x: x.str.strip() == "")).values.any():
-            return "No se pudo importar, datos vacíos "
-        
-      
-        
-        #Revisa la existencia de grupos validos
-        for coex in lista_informacion:
-            if coex in df.columns:
-                    
-                invalidas = ~df[coex].isin(lista_informacion[coex])
-                if invalidas.any():
-                    return "No se pudo importar, grupo no encontrada"
-            
-            
-        #Validar que el campo unidad, calificacion y No.Faltas sea solamente numeros
-        for columna in columnas_numerica:
-            if columna in df.columns:
-                no_numericos = df[~df[columna].astype(str).str.isnumeric()]
-                if not no_numericos.empty:
-                    return f"No se pudo importar, datos no numéricos en {columna}"
+        with pd.ExcelFile(archivo) as ArchivoEx:
+            hojas = ArchivoEx.sheet_names
 
-        if 'No_Control' in df.columns:
-            
-                if not df['No_Control'].astype(str).str.match(patron_no_control).all():
-                    return "No se pudo importar: hay números de control con formato inválido"
-            
-                if df['No_Control'].duplicated().any():
-                    return "No se pudo importar: hay números de control repetidos"
+            for hoja in hojas:
+                df =archivo.parse(hoja)
+                df.columns = df.columns.str.strip() #quita los espacios de las celdas
                 
-        contenido[hoja] = df
-        print(df)
+                #Revisa que existan columnas 
+                faltantes = [c for c in ["Grupo"] + columnas_numerica if c not in df.columns]
+                if faltantes:
+                    return f"No se pudo importar, columnas faltantes, o error de escritura: {', '.join(faltantes)}"
+                
+                #Detecta valores nulos
+                if df.isnull().values.any():
+                    return "No se pudo importar, datos nulos"
+                
+                #Detecta valores vacios
+                if (df.astype(str).apply(lambda x: x.str.strip() == "")).values.any():
+                    return "No se pudo importar, datos vacíos "
+                
+            
+                
+                #Revisa la existencia de grupos validos
+                for coex in lista_informacion:
+                    if coex in df.columns:
+                            
+                        invalidas = ~df[coex].isin(lista_informacion[coex])
+                        if invalidas.any():
+                            return "No se pudo importar, grupo no encontrada"
+                    
+                    
+                #Validar que el campo unidad, calificacion y No.Faltas sea solamente numeros
+                for columna in columnas_numerica:
+                    if columna in df.columns:
+                        no_numericos = df[~df[columna].astype(str).str.isnumeric()]
+                        if not no_numericos.empty:
+                            return f"No se pudo importar, datos no numéricos en {columna}"
+
+                if 'No_Control' in df.columns:
+                    
+                        if not df['No_Control'].astype(str).str.match(patron_no_control).all():
+                            return "No se pudo importar: hay números de control con formato inválido"
+                    
+                        if df['No_Control'].duplicated().any():
+                            return "No se pudo importar: hay números de control repetidos"
+                        
+                contenido[hoja] = df
+                print(df)
     except Exception as e:
         return f'Error al importar el archivo: {str(e)}'
+    print('guardar calificacion')
     resultado = guardar_calificaciones(contenido)
     return resultado
 
@@ -184,17 +187,16 @@ def guardar_calificaciones(datos):
 
                 if calificacion_existente:
                     # Actualizar campos
-                    calificacion_existente.calificacion = float(fila["Calificacion"])
-                    calificacion_existente.no_faltas = int(fila["No_Faltas"])
-                    calificacion_existente.no_asistencia = int(fila["No_Asistencia"])
+                    calificacion_existente.calificacion = fila["Calificacion"]
+                    calificacion_existente.no_faltas = fila["No_Faltas"]
+                    calificacion_existente.no_asistencia = fila["No_Asistencia"]
                 else:
                     # Crear nueva calificación
                     nueva_calificacion = Calificaciones(
                         id_inscripcion=id_inscripcion,
                         unidad=unidad,
-                        calificacion=float(fila["Calificacion"]),
-                        no_faltas=int(fila["No_Faltas"]),
-                        no_asistencia=int(fila["No_Asistencia"])
+                        calificacion=fila["Calificacion"],
+                        no_faltas=fila["No_Faltas"]
                     )
                     db.session.add(nueva_calificacion)
 
@@ -207,7 +209,7 @@ def guardar_calificaciones(datos):
             return datos
     except Exception as e:
         db.session.rollback()
-        return f'No se guardaron los datos {str(e)}'
+        return f'No se pudo importar, error al guardar las calificaciones {str(e)}'
     
 
 def Guardar_Datos_grupos(datos):
@@ -273,4 +275,4 @@ def Guardar_Datos_grupos(datos):
             return datos
     except Exception as e:
         db.session.rollback()
-        return f'No se pudo importar, error al guardar losdatos {str(e)}'
+        return f'No se pudo importar, error al guardar los datos {str(e)}'
