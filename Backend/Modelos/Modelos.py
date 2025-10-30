@@ -191,3 +191,18 @@ class MateriasPorCarrera(db.Model):
             'nombre_materia': self.materia.nombre if self.materia else None,
             'nombre_carrera': self.carrera.nombre if self.carrera else None
         }
+    
+class Auditrail(db.Model):
+        __tablename__='audit_trail'
+        id = db.Column(db.Integer, primary_key=True, nullable=False)
+        origin = db.Column(db.Text, nullable=False)
+        accion = db.Column(db.Text,nullable=False)
+        clave_docente = db.Column(db.Integer, nullable = False)
+        created_at = db.Column(db.Date, nullable=False)
+
+        def to_dict(self):
+            return {
+                'id':self.id,
+                'accion':self.accion,
+                'clave_docente':self.clave_docente
+            }

@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify,request
 from Funciones.ImportarExcel import importar_grupos,importar_calificaciones
 from Modelos.Modelos import Grupos, Carreras,Materias
 import os
+from Funciones.Registrar_moviminto import registrar_audi
 
 Import_export_bp = Blueprint('Import_export',__name__)
 
@@ -44,6 +45,8 @@ def importar_Excel_grupos():
         if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
             return jsonify({'error': procesamiento}), 400
         
+        registrar_audi('Alumnos','Importar grupo',212420)
+
         return jsonify({'message': 'Archivo procesado correctamente', 'resultado': procesamiento}),200
     except Exception  as e:
         return jsonify({'error': f'Error al importar el archivo {str(e)}'}),400
@@ -78,6 +81,11 @@ def importar_Excel_Calificaciones():
        
 
         os.remove(ruta)
+
+        if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
+            return jsonify({'error': procesamiento}), 400
+        
+        registrar_audi('Alumnos','Importar grupo',212420)
 
         return jsonify({'mensaje':'Archivo subido', 'resultado' : procesamiento})
     except Exception  as e:
