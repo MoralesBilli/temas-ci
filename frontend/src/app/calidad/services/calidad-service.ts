@@ -1,69 +1,44 @@
 import { Injectable, resource } from '@angular/core';
 import { sleep } from '../../core/utils/asyncUtils';
 import { datoControl, datoDispersion, datoHistograma, datoPareto } from '../models/graficas';
+import { httpResource } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalidadService {
-  readonly datosHistograma = resource({
-    async loader() {
-      await sleep(500)
-      const calificaciones = Array.from({ length: 50 }).fill(null).map(v => Math.floor(Math.random() * 101))
+  private readonly apiUrl = environment.apiUrl
 
-      return datoHistograma.array().parse(
-        calificaciones.map(calificacion => ({
-          calificacion,
-          qty: Math.floor(Math.random() * 10)
-        }))
-      )
-    },
-    defaultValue: []
-  })
+  readonly datosHistograma = httpResource(
+    () => `${this.apiUrl}/calidad/histograma`,
+    {
+      parse: data => datoHistograma.array().parse(data),
+      defaultValue: []
+    }
+  )
 
-  readonly datosPareto = resource({
-    async loader() {
-      await sleep(500)
+  readonly datosPareto = httpResource(
+    () => `${this.apiUrl}/calidad/pareto`,
+    {
+      parse: data => datoPareto.array().parse(data),
+      defaultValue: []
+    }
+  )
 
-      return datoPareto.array().parse(
-        ['Academico', 'Economico', 'Contextual', 'Psicosocial', 'Institucional'].map(factor => ({
-          factor,
-          qty: Math.floor(Math.random() * 50)
-        }))
-      )
-    },
-    defaultValue: []
-  })
+  readonly datosDispersion = httpResource(
+    () => `${this.apiUrl}/calidad/dispersion`,
+    {
+      parse: data => datoDispersion.array().parse(data),
+      defaultValue: []
+    }
+  )
 
-  readonly datosDispersion = resource({
-    async loader() {
-      await sleep(500)
-
-      return datoDispersion.array().parse(
-        Array.from({ length: 50 }).map(() => ({
-          calificacion: Math.floor(Math.random() * 101),
-          faltas: Math.floor(Math.random() * 13)
-        }))
-      )
-    },
-    defaultValue: []
-  })
-
-  readonly datosControl = resource({
-    async loader() {
-      await sleep(500)
-
-      return datoControl.array().parse(
-        [
-          { unidad: 1, calificacionPromedio: Math.floor(Math.random() * 101) },
-          { unidad: 2, calificacionPromedio: Math.floor(Math.random() * 101) },
-          { unidad: 3, calificacionPromedio: Math.floor(Math.random() * 101) },
-          { unidad: 4, calificacionPromedio: Math.floor(Math.random() * 101) },
-          { unidad: 5, calificacionPromedio: Math.floor(Math.random() * 101) },
-          { unidad: 6, calificacionPromedio: Math.floor(Math.random() * 101) },
-        ]
-      )
-    },
-    defaultValue: []
-  })
+  readonly datosControl = httpResource(
+    () => `${this.apiUrl}/calidad/control`,
+    {
+      parse: data => datoControl.array().parse(data),
+      defaultValue: []
+    }
+  )
 }

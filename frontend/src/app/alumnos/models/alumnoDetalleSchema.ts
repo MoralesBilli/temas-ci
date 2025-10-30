@@ -10,7 +10,7 @@ const inscripcionSchema = z.object({
 	grupo: z.string().min(1, 'El grupo es obligatorio'),
 	nombreMateria: z.string().min(1, 'El nombre de la materia es obligatorio'),
 	serieMateria: z.string().min(1, 'La serie de la materia es obligatoria'),
-	calificaciones: calificacionSchema.array().nonempty('Se requiere al menos una calificación')
+	calificaciones: calificacionSchema.array()
 });
 
 export const alumnoDetalleSchema = z.object({
@@ -23,8 +23,8 @@ export const alumnoDetalleSchema = z.object({
 	modalidadCarrera: z.string().min(1, 'La modalidad de la carrera es obligatoria'),
 	nombreCarrera: z.string().min(1, 'El nombre de la carrera es obligatorio'),
 	semestre: z.string().min(1, 'El semestre es obligatorio'),
-	factoresDeRiesgo: z.string().min(1, 'El factor de riesgo es obligatorio').array(),
-	inscripciones: inscripcionSchema.array().nonempty('Se requiere al menos una inscripción')
+	factoresDeRiesgo: z.string().array(),
+	inscripciones: inscripcionSchema.array()
 });
 
 export type AlumnoDetalle = z.infer<typeof alumnoDetalleSchema>;
