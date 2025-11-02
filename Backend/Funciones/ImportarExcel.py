@@ -4,6 +4,7 @@ from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Gr
 import re
 from Funciones.Agregar_docente import crear_docente
 #Lectura del archivo excel
+
 def importar_calificaciones(archivo,grupos,materias):
     
     contenido = {}
@@ -34,7 +35,6 @@ def importar_calificaciones(archivo,grupos,materias):
                     return "No se pudo importar, datos vacíos "
                 
             
-                
                 #Revisa la existencia de grupos validos
                 for coex in lista_informacion:
                     if coex in df.columns:

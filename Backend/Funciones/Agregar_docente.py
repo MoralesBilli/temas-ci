@@ -27,7 +27,7 @@ def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num
         db.session.flush()  # para obtener id si es necesario
 
         # Crear login
-        contrasena_hash = bcrypt.hashpw(clave_docente.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        contrasena_hash = bcrypt.hashpw(str(clave_docente).encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         nuevo_login = Inicio_Sesion(
             id_docente=clave_docente,
             usuario=clave_docente,
