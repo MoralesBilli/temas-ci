@@ -1,9 +1,10 @@
 from Extensiones import db
 from flask import Blueprint, jsonify,request
 from Funciones.ImportarExcel import importar_grupos,importar_calificaciones, importar_docentes
-from Modelos.Modelos import Grupos, Carreras,Materias
+from Modelos.Modelos import Grupos, Carreras,Materias, Inicio_Sesion
 import os
 from Funciones.Registrar_moviminto import registrar_audi
+from Funciones.Decodificar import token_required
 
 Import_export_bp = Blueprint('Import_export',__name__)
 
@@ -11,7 +12,8 @@ Import_export_bp = Blueprint('Import_export',__name__)
 
 
 @Import_export_bp.route('/api/importar/grupos',methods=['POST'])
-def importar_Excel_grupos():
+@token_required
+def importar_Excel_grupos(id_login):
     try:
         UPLOAD_FOLDER = 'grupos'
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -45,7 +47,13 @@ def importar_Excel_grupos():
         if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
             return jsonify({'error': procesamiento}), 400
         
-        registrar_audi('Alumnos','Importar grupo',212420)
+        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
+        if not docente:
+            raise ValueError("No se encontró el docente con ese ID de sesión.")
+
+        id_docente=docente.id_docente
+
+        registrar_audi('Alumnos','Importar grupo',id_docente)
 
         return jsonify({'message': 'Archivo procesado correctamente', 'resultado': procesamiento}),200
     except Exception  as e:
@@ -53,7 +61,8 @@ def importar_Excel_grupos():
 
 
 @Import_export_bp.route('/api/importar/calificaciones',methods=['POST'])
-def importar_Excel_Calificaciones():
+@token_required
+def importar_Excel_Calificaciones(id_login):
     try:
         UPLOAD_FOLDER = 'calificacion'
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -85,7 +94,12 @@ def importar_Excel_Calificaciones():
         if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
             return jsonify({'error': procesamiento}), 400
         
-        print(procesamiento)
+        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
+        
+        if not docente:
+            raise ValueError("No se encontró el docente con ese ID de sesión.")
+        id_docente=docente.id_docente
+        registrar_audi('Alumnos','Importar calificaciones',id_docente)
 
         return jsonify({'mensaje':'Archivo subido', 'resultado' : procesamiento})
     except Exception  as e:
@@ -94,7 +108,8 @@ def importar_Excel_Calificaciones():
 
 
 @Import_export_bp.route('/api/importar/docentes',methods=['POST'])
-def importar_Excel_Docentes():
+@token_required
+def importar_Excel_Docentes(id_login):
     try:
         UPLOAD_FOLDER = 'docentes'
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -123,7 +138,11 @@ def importar_Excel_Docentes():
         if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
             return jsonify({'error': procesamiento}), 400
         
-        registrar_audi('Alumnos','Importar grupo',212420)
+        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
+        if not docente:
+            raise ValueError("No se encontró el docente con ese ID de sesión.")
+        id_docente=docente.id_docente
+        registrar_audi('Alumnos','Importar docente',id_docente)
 
         return jsonify({'mensaje':'Archivo subido', 'resultado' : procesamiento})
     except Exception  as e:
