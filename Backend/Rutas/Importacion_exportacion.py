@@ -85,10 +85,11 @@ def importar_Excel_Calificaciones():
         if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
             return jsonify({'error': procesamiento}), 400
         
-        registrar_audi('Alumnos','Importar grupo',212420)
+        print(procesamiento)
 
         return jsonify({'mensaje':'Archivo subido', 'resultado' : procesamiento})
     except Exception  as e:
+        print(str(e))
         return jsonify({'error': f'Error al importar el archivo {str(e)}'}),400
 
 

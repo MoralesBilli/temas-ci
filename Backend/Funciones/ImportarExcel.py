@@ -7,17 +7,17 @@ from Funciones.Agregar_docente import crear_docente
 def importar_calificaciones(archivo,grupos,materias):
     
     contenido = {}
-    columnas_numerica = ["Unidad", "No_Faltas","Calificacion"]
+    columnas_numerica = ["Unidad", "No_Faltas","Calificación"]
     patron_no_control = r'^(?:\d{8}|[CMD]\d{8})$'
     lista_informacion = {"Grupo": grupos, "Materia":materias}
-
+    
 
     try:
         with pd.ExcelFile(archivo) as ArchivoEx:
             hojas = ArchivoEx.sheet_names
 
             for hoja in hojas:
-                df =archivo.parse(hoja)
+                df =ArchivoEx.parse(hoja)
                 df.columns = df.columns.str.strip() #quita los espacios de las celdas
                 
                 #Revisa que existan columnas 
@@ -38,7 +38,8 @@ def importar_calificaciones(archivo,grupos,materias):
                 #Revisa la existencia de grupos validos
                 for coex in lista_informacion:
                     if coex in df.columns:
-                            
+                        df[coex] = df[coex].astype(str).str.strip()
+                       
                         invalidas = ~df[coex].isin(lista_informacion[coex])
                         if invalidas.any():
                             return "No se pudo importar, grupo o materia no encontrada"
@@ -60,7 +61,7 @@ def importar_calificaciones(archivo,grupos,materias):
                             return "No se pudo importar: hay números de control repetidos"
                         
                 contenido[hoja] = df
-                print(df)
+             
                 
     except Exception as e:
         return f'Error al importar el archivo: {str(e)}'
@@ -226,7 +227,7 @@ def guardar_calificaciones(datos):
         if not isinstance(datos, dict):
             return datos
 
-        
+       
         grupos = {g.grupo: g.id for g in Grupos.query.all()}
         materias = {m.nombre: m.id for m in Materias.query.all()}
 
@@ -248,38 +249,46 @@ def guardar_calificaciones(datos):
             inscripciones = Inscripciones.query.filter_by(id_grupo=id_grupo).all()
             inscripciones_dict = {i.no_control_alumno: i.id for i in inscripciones}
 
+            
+
             # Obtener calificaciones existentes del grupo/materia
             calificaciones_existentes = Calificaciones.query.filter(
                 Calificaciones.id_inscripcion.in_(inscripciones_dict.values()),
-                Calificaciones.materia == nombre_materia
+                Calificaciones.id_materia == id_materia
             ).all()
+            
+
             calificaciones_dict = {
                 (c.id_inscripcion, c.unidad): c for c in calificaciones_existentes
             }
 
             # Procesar cada fila del DataFrame
             for _, fila in df.iterrows():
-                no_control = fila["No_Control"]
+                no_control = str(fila["No_Control"]).strip()
                 id_inscripcion = inscripciones_dict.get(no_control)
+               
                 if id_inscripcion is None:
                     continue  # alumno no inscrito en este grupo
 
+                
                 unidad = int(fila["Unidad"])
                 key = (id_inscripcion, unidad)
                 calificacion = calificaciones_dict.get(key)
 
+                
+
                 if calificacion:
-                    calificacion.calificacion = fila["Calificacion"]
+                    calificacion.calificacion = fila["Calificación"]
                     calificacion.no_faltas = fila["No_Faltas"]
                 else:
-                    nueva = Calificaciones(
+                    nueva_calificacion = Calificaciones(
                         id_inscripcion=id_inscripcion,
                         unidad=unidad,
-                        calificacion=fila["Calificacion"],
-                        no_faltas=fila["No_Faltas"],
-                        materia=nombre_materia
+                        calificacion=fila["Calificación"],
+                        faltas=fila["No_Faltas"],
+                        id_materia=id_materia  
                     )
-                    db.session.add(nueva)
+                    db.session.add(nueva_calificacion)
                     total_registros += 1
 
         db.session.commit()

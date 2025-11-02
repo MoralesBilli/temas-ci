@@ -49,15 +49,19 @@ def obtener_alumno_detalle(no_control):
         # Recorrer inscripciones
         for inscripcion in alumno.inscripciones:
             grupo = inscripcion.grupo
-            materia = grupo.materia if grupo else None
-
-            ins = {
-                "grupo": grupo.grupo if grupo else None,
-                "nombreMateria": materia.nombre if materia else None,
-                "serieMateria": materia.serie if materia else None,
-                "calificaciones": []
-            }
-
+            materias = []
+            if grupo:
+                for relacion in grupo.grupos_materias:
+                    materia = relacion.materia
+                    materias.append({
+                        "nombreMateria": materia.nombre,
+                        "serieMateria": materia.serie
+                    })
+                ins = {
+                    "grupo": grupo.grupo if grupo else None,
+                    "materias": materias,
+                    "calificaciones": []
+                }
             # Calificaciones de esa inscripción
             for cal in inscripcion.calificaciones:
                 ins['calificaciones'].append({

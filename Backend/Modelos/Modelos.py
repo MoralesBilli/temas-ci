@@ -113,23 +113,20 @@ class Grupos(db.Model):
     __tablename__ = 'grupos'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     grupo = db.Column(db.String(16))
-    id_materia = db.Column(db.Integer, db.ForeignKey('materias.id'), nullable=False)
-
-    materia = db.relationship('Materias', backref='grupos')
+    semestre = semestre
     
+    grupos_materias = db.relationship('grupos_materias', backref='grupos', lazy='dynamic')
     def to_dict(self):
         return {
             'id': self.id,
             'grupo': self.grupo,
-            'id_materia': self.id_materia,
+            'semestre':self.semestre
             
-            'nombre_materia': self.materia.nombre if self.materia else None
         }
 
 class Inscripciones(db.Model):
     __tablename__ = 'inscripciones'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    
     id_grupo = db.Column(db.Integer, db.ForeignKey('grupos.id'), nullable=False)
     no_control_alumno = db.Column(db.String(16), db.ForeignKey('alumnos.no_control'), nullable=False)
     
@@ -141,7 +138,6 @@ class Inscripciones(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'periodo': self.periodo,
             'id_grupo': self.id_grupo,
             'no_control_alumno': self.no_control_alumno,
             
@@ -240,4 +236,20 @@ class Inicio_Sesion(db.Model):
         return{
             'usuario':self.usuario
         }
+
+class grupos_materias(db.Model):
+    __tabename__='grupos_materias'
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id_grupo=db.Column(db.Integer,db.ForeignKey('grupos.id'),nullable=False)
+    id_materia = db.Column(db.Integer,db.ForeignKey('materias.id'),nullable=False)
+
+    #grupo = db.relationship('Grupos', backref='grupos_materias')
+    materia = db.relationship('Materias', backref='grupos_materias')
+
+    def to_dict(self):
+        return{
+            'Grupo_materia':self.id,
+            'id_materia':self.id_materia
+        }
+
 
