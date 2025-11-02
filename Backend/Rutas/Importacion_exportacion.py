@@ -92,8 +92,8 @@ def importar_Excel_Calificaciones():
         return jsonify({'error': f'Error al importar el archivo {str(e)}'}),400
 
 
-@Import_export_bp.route('/api/importar/ddocentes',methods=['POST'])
-def importar_Excel_Calificaciones():
+@Import_export_bp.route('/api/importar/docentes',methods=['POST'])
+def importar_Excel_Docentes():
     try:
         UPLOAD_FOLDER = 'docentes'
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
