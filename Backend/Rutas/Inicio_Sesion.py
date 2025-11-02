@@ -14,7 +14,7 @@ def login():
         contraseña = data.get('password')
 
         inicio = Inicio_Sesion.query.filter_by(usuario=usuario).first()
-        primera_vez = inicio.primer_acceso
+        primera_vez = inicio.primera_vez
         if not inicio:
             return jsonify({'error':'Usuario no encontrado'}),401
 
