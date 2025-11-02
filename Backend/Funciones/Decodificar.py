@@ -20,7 +20,7 @@ def token_required(f):
             return jsonify({'message': 'Token es requerido'}), 401
         try:
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            id_login = data.get('id_login')
+            id_login = data.get('id')
           
             
             

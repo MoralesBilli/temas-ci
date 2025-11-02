@@ -35,14 +35,14 @@
 				}
 			</div>
 
-			@if (error) {
+			@if (error()) {
 				<div class="alert alert-error text-sm">
-					{{ error }}
+					{{ error() }}
 				</div>
 			}
 
-			<button class="btn btn-primary btn-block mt-2" type="submit" [disabled]="loading">
-				{{ loading ? 'Ingresando...' : 'Entrar' }}
+			<button class="btn btn-primary btn-block mt-2" type="submit" [disabled]="loading()">
+				{{ loading() ? 'Ingresando...' : 'Entrar' }}
 			</button>
 
 			<div class="divider my-1"></div>

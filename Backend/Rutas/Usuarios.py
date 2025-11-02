@@ -1,6 +1,6 @@
 from flask import Blueprint, request,jsonify
 from Extensiones import db
-from Funciones.Agregar_docente import crear_docente
+from Funciones.Agregar_docente import crear_docente as crear_docente2
 Usuarios_bp = Blueprint('usuarios',__name__)
 
 @Usuarios_bp.route('/api/crear-usuario',methods=['POST'])
@@ -13,7 +13,7 @@ def crear_docente():
         num_telefono = request.form.get('telefono')
         correo =  request.form.get('correo')
 
-        exito, mensaje = crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo)
+        exito, mensaje = crear_docente2(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo)
         if exito:
             return jsonify({'status':'success','message':mensaje}), 201
         else:

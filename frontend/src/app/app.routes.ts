@@ -27,4 +27,17 @@ export const routes: Routes = [
     title: 'Calidad',
     canActivate: [authGuard]
   }
+  ,
+  {
+    path: 'profile',
+    loadComponent: () => import('./profile/profile-page/profile-page').then(c => c.ProfilePage),
+    title: 'Perfil',
+    canActivate: [authGuard]
+  },
+  {
+    path: 'audit-trail',
+    loadComponent: () => import('./audit-trail/audit-trail-page/audit-trail-page').then(c => c.AuditTrailPage),
+    title: 'Auditoría',
+    canActivate: [authGuard]
+  }
 ];
