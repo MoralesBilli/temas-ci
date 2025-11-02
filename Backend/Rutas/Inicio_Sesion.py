@@ -13,7 +13,7 @@ def login():
         usuario = data.get('user')
         contraseña = data.get('password')
 
-        inicio = Inicio_Sesion.query.filter(usuario=usuario).first()
+        inicio = Inicio_Sesion.query.filter_by(usuario=usuario).first()
         primera_vez = inicio.primer_acceso
         if not inicio:
             return jsonify({'error':'Usuario no encontrado'}),401
@@ -29,7 +29,7 @@ def login():
             return jsonify({"success": False, "error": "Credenciales incorrectas"}), 401
         
     except Exception as e:
-        return jsonify({'error', 'Error al iniciar sesion'}),500
+        return jsonify({'error': 'Error al iniciar sesion'}),500
 
 
 @Inicio_sesion_bp.route('/api/cambiar-contraseña',methods=['PUT'])
