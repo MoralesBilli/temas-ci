@@ -16,9 +16,11 @@ def login():
         contraseña = data.get('password')
 
         inicio = Inicio_Sesion.query.filter_by(usuario=usuario).first()
-        primera_vez = inicio.primera_vez
+
         if not inicio:
             return jsonify({'error':'Usuario no encontrado'}),401
+        
+        primera_vez = inicio.primera_vez
 
         if bcrypt.checkpw(contraseña.encode('utf-8'), inicio.contrasena.encode('utf-8')):
             token = jwt.encode({
@@ -31,7 +33,7 @@ def login():
             return jsonify({"success": False, "error": "Credenciales incorrectas"}), 401
         
     except Exception as e:
-        return jsonify({'error': 'Error al iniciar sesion'}),500
+        return jsonify({'error': f'Error al iniciar sesion: {str(e)}'}),500
 
 
 @Inicio_sesion_bp.route('/api/cambiar-contraseña',methods=['PUT'])

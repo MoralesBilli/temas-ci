@@ -21,7 +21,7 @@ def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num
             apellido_paterno=apellido_paterno,
             apellido_materno=apellido_materno,
             num_telefono=num_telefono,
-            correo=correo
+            correo=correo 
         )
         db.session.add(nuevo_docente)
         db.session.flush()  # para obtener id si es necesario
@@ -31,7 +31,8 @@ def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num
         nuevo_login = Inicio_Sesion(
             id_docente=clave_docente,
             usuario=clave_docente,
-            contrasena=contrasena_hash
+            contrasena=contrasena_hash,
+            primera_vez=True
         )
         db.session.add(nuevo_login)
 
