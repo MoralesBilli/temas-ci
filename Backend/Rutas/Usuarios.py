@@ -7,7 +7,6 @@ from Funciones.Decodificar import token_required
 from Modelos.Modelos import Inicio_Sesion
 
 @Usuarios_bp.route('/api/crear-usuario',methods=['POST'])
-@token_required
 def crear_docente(id_login):
     try:
         clave_docente = request.form.get('clave')
