@@ -149,48 +149,12 @@ def importar_Excel_Docentes(id_login):
     except Exception  as e:
         return jsonify({'error': f'Error al importar el archivo {str(e)}'}),400
 
-def importar_Excel_Calificaciones():
-    try:
-        UPLOAD_FOLDER = 'calificacion'
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        grupos = Grupos.query.all()
-        materias = Materias.query.all()
-        materias_nombres = [materia.nombre for materia in materias]
-        grupos_nombres = [grupo.grupo for grupo in grupos]
-        #validaciones 
-        if 'archivo' not in request.files:
-            return jsonify({'error': 'No fue enviaddo un archivo'}),400
-        
-        archivo = request.files['archivo']
-
-        if archivo.filename == '':
-            return jsonify({'error': 'El nombre del archivo está vacío'}),400
-        
-        if not archivo.filename.endswith(('.xls','.xlsx')):
-            return jsonify({'error':'Formato de archivo no válido'}),400
-        
-
-        ruta = os.path.join(UPLOAD_FOLDER, archivo.filename)
-        archivo.save(ruta)
-
-        procesamiento =  importar_calificaciones(ruta,grupos_nombres,materias_nombres)
-       
-
-        os.remove(ruta)
-
-        if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
-            return jsonify({'error': procesamiento}), 400
-        
-        registrar_audi('Alumnos','Importar grupo',212420)
-
-        return jsonify({'mensaje':'Archivo subido', 'resultado' : procesamiento})
-    except Exception  as e:
-        return jsonify({'error': f'Error al importar el archivo {str(e)}'}),400
 
 
 
 @Import_export_bp.route('/api/exportar/reporte_tutoria/<no_control>', methods=['GET'])
-def exportar_reporte_alumno(no_control):
+@token_required
+def exportar_reporte_alumno(no_control,id_login):
     try:
         # Generar el reporte
         pdf_path = generar_reporte_tutoria(no_control)
@@ -201,11 +165,15 @@ def exportar_reporte_alumno(no_control):
         # Enviar el archivo
         response = send_file(pdf_path, as_attachment=True, download_name=os.path.basename(pdf_path))
         
-        # Opcional: Registrar auditoría si es necesario
-        # registrar_audi('Reportes', 'ExportarConstancia', ID_DE_USUARIO_AQUI)
+      
+        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
+        if not docente:
+            raise ValueError("No se encontró el docente con ese ID de sesión.")
 
+        id_docente=docente.id_docente
+        registrar_audi('Alumnos','exportar constancia',id_docente)
         return response
-
+        
     except ValueError as e:
         return jsonify({'error': str(e)}), 404
     except Exception as e:

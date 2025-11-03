@@ -1,14 +1,14 @@
 from Extensiones import db
 from Modelos.Modelos import Auditrail
-from datetime import datetime
+from datetime import date
 def registrar_audi(origen,accion,clave,):
     try:
-        fecha = datetime.today()
+        
         nuevo_movimiento = Auditrail(
             origin = origen,
             accion=accion,
             clave_docente = clave,
-            create_at = fecha
+            created_at = date.today()
         )
         db.session.add(nuevo_movimiento)
         db.session.commit()
