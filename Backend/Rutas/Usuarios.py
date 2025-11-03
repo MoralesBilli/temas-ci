@@ -18,13 +18,7 @@ def crear_docente():
 
         exito, mensaje = crear_docente2(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo)
         if exito:
-            docente = Inicio_Sesion.query.filter_by(id=id_login).first()
-            if not docente:
-                raise ValueError("No se encontró el docente con ese ID de sesión.")
-
-            id_docente=docente.id_docente
-
-            registrar_audi('Alumnos','Importar grupo',id_docente)
+            
             return jsonify({'status':'success','message':mensaje}), 201
         
         else:
