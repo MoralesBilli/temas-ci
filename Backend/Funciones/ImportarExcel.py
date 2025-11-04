@@ -233,10 +233,10 @@ def guardar_calificaciones(datos):
         for hoja, df in datos.items():
             nombre_grupo = df["Grupo"].iloc[0]
             nombre_materia = df["Materia"].iloc[0]
-
+            
             id_grupo = grupos.get(nombre_grupo)
             id_materia = materias.get(nombre_materia)
-
+           
             if id_grupo is None:
                 return f"Grupo '{nombre_grupo}' no encontrado en la base de datos"
             if id_materia is None:
@@ -247,14 +247,14 @@ def guardar_calificaciones(datos):
             inscripciones_dict = {str(i.no_control_alumno): i.id for i in inscripciones}
 
             
-            print(inscripciones_dict)
+         
             # Obtener calificaciones existentes del grupo/materia
             calificaciones_existentes = Calificaciones.query.filter(
                 Calificaciones.id_inscripcion.in_(inscripciones_dict.values()),
                 Calificaciones.id_materia == id_materia
             ).all()
             
-            print(calificaciones_existentes)
+      
 
             calificaciones_dict = {
                 (c.id_inscripcion, c.unidad): c for c in calificaciones_existentes
@@ -263,11 +263,12 @@ def guardar_calificaciones(datos):
             # Procesar cada fila del DataFrame
             for _, fila in df.iterrows():
                 no_control = str(fila["No_Control"]).strip()
-                print( f'Numero de control {no_control}')
+
+               
+
                 id_inscripcion = inscripciones_dict.get(no_control)
 
-                print(id_inscripcion)
-
+               
                 if id_inscripcion is None:
                     continue  # alumno no inscrito en este grupo
 
