@@ -81,3 +81,5 @@ def obtener_alumno_detalle(no_control):
 
     except Exception as e:
         return jsonify({'ERROR': f'Error al cargar el alumno: {str(e)}'}), 500
+
+#agragar factors
