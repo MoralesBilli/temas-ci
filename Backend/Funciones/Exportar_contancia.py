@@ -8,6 +8,7 @@ from Extensiones import db
 import textwrap
 
 def generar_reporte_tutoria(no_control):
+
     # --- 1. Obtener datos del alumno ---
     alumno = db.session.query(Alumnos).filter_by(no_control=no_control).first()
     if not alumno:
@@ -45,9 +46,9 @@ def generar_reporte_tutoria(no_control):
     width, height = letter
 
     # --- Encabezado ---
-    header_image_path = os.path.join(os.path.dirname(__file__), 'images', 'encabezado.png')
+    header_image_path = os.path.join(os.path.dirname(__file__), 'imagenes', 'encabezado.png')
     header_height = 1.5 * inch # Altura deseada para el encabezado
-
+    
     try:
         # Dibuja la imagen de encabezado que abarca todo el ancho
         c.drawImage(header_image_path, 0, height - header_height, width=width, height=header_height, preserveAspectRatio=False)
@@ -85,7 +86,8 @@ def generar_reporte_tutoria(no_control):
     text_obj.textLines(wrapped_line1)
     text_obj.textLine("")
 
-    text_obj.textLine("Según los registros que obran en el archivo de control escolar, se han identificado los siguientes factores de riesgo asociados al alumno(a) para su oportuno seguimiento:")
+    text_obj.textLine("Según los registros que obran en el archivo de control escolar, se han identificado los siguientes ") 
+    text_obj.textLine("factores de riesgo asociados al alumno(a) para su oportuno seguimiento:")
     
     c.drawText(text_obj)
     current_y = text_obj.getY()

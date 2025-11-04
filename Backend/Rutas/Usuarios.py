@@ -2,9 +2,9 @@ from flask import Blueprint, request,jsonify
 from Extensiones import db
 from Funciones.Agregar_docente import crear_docente as crear_docente2
 Usuarios_bp = Blueprint('usuarios',__name__)
-from Funciones.Registrar_moviminto import registrar_audi
-from Funciones.Decodificar import token_required
-from Modelos.Modelos import Inicio_Sesion
+
+import re
+
 
 @Usuarios_bp.route('/api/crear-usuario',methods=['POST'])
 def crear_docente():
@@ -15,6 +15,24 @@ def crear_docente():
         apellido_materno = request.form.get('apellidoma')
         num_telefono = request.form.get('telefono')
         correo =  request.form.get('correo')
+
+        patron_nombre = r'^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$'
+        patron_correo = r'^[a-zA-Z0-9._%+-]+@tectijuana\.edu\.mx$'
+
+        nombres = {'Nombre':nombre,'Apellido paterno':apellido_paterno,'Apellido materno': apellido_materno}
+        #validaciones
+        if not re.match(patron_correo,correo):
+            return jsonify({'error':'Formato de correo incorrecto'})
+        
+        for etiqueta, n in nombres.items():
+            if not  re.match(patron_nombre,n):
+                return jsonify({'error':f'Formato de nombre {n}'})
+        
+        if len(str(num_telefono)) != 10:
+            return jsonify({'error':'Numero de telefono es incorrecto'})
+        
+        if not str(clave_docente).isdigit():
+            return jsonify({'error':'La calve debe de ser numerica'})
 
         exito, mensaje = crear_docente2(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo)
         if exito:

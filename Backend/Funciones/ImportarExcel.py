@@ -72,7 +72,7 @@ def importar_docentes(archivo):
     contenido = {}
     patron_nombre = r'^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$'
     columnas_numerica = ['Telefono', 'Clave_Docente']
-    patron_correo = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    patron_correo = r'^[a-zA-Z0-9._%+-]+@tectijuana\.edu\.mx$'
     try:
         with pd.ExcelFile(archivo) as ArchivoEx:
             hojas = ArchivoEx.sheet_names
