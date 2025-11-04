@@ -57,8 +57,7 @@ def importar_calificaciones(archivo,grupos,materias):
                         if not df['No_Control'].astype(str).str.match(patron_no_control).all():
                             return "No se pudo importar: hay números de control con formato inválido"
                     
-                        if df['No_Control'].duplicated().any():
-                            return "No se pudo importar: hay números de control repetidos"
+                        
                         
                 contenido[hoja] = df
              
@@ -192,6 +191,7 @@ def importar_grupos(archivo,carreras,grupos):
                 
                     if not df['No_Control'].astype(str).str.match(patron_no_control).all():
                         return "No se pudo importar: hay números de control con formato inválido"
+                   
                     
                 for col in ["Nombre", "Apellido_Paterno", "Apellido_Materno"]:
                         if col in df.columns:
