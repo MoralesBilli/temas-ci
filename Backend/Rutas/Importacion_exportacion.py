@@ -6,6 +6,7 @@ import os
 from Funciones.Registrar_moviminto import registrar_audi
 from Funciones.Decodificar import token_required
 from Funciones.Exportar_contancia import generar_reporte_tutoria
+from io import BytesIO
 
 Import_export_bp = Blueprint('Import_export',__name__)
 
@@ -154,36 +155,24 @@ def importar_Excel_Docentes(id_login):
 
 @Import_export_bp.route('/api/exportar/reporte_tutoria/<no_control>', methods=['GET'])
 @token_required
-def exportar_reporte_alumno(no_control,id_login):
+def exportar_reporte_alumno(no_control, id_login):
     try:
-        # Generar el reporte
-        pdf_path = generar_reporte_tutoria(no_control)
-        
-        if not pdf_path or not os.path.exists(pdf_path):
-            return jsonify({'error': 'No se pudo generar el archivo PDF.'}), 500
+        pdf_buffer = generar_reporte_tutoria(no_control)
 
-        # Enviar el archivo
-        response = send_file(pdf_path, as_attachment=True, download_name=os.path.basename(pdf_path))
-        
-      
         docente = Inicio_Sesion.query.filter_by(id=id_login).first()
         if not docente:
             raise ValueError("No se encontró el docente con ese ID de sesión.")
 
-        id_docente=docente.id_docente
-        registrar_audi('Alumnos','exportar constancia',id_docente)
-        return response
-        
+        registrar_audi('Alumnos', 'exportar constancia', docente.id_docente)
+
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f"Reporte_{no_control}.pdf"
+        )
+
     except ValueError as e:
         return jsonify({'error': str(e)}), 404
     except Exception as e:
         return jsonify({'error': f'Ocurrió un error inesperado: {str(e)}'}), 500
-    finally:
-        # Limpiar el archivo generado después de enviarlo
-        if 'pdf_path' in locals() and os.path.exists(pdf_path):
-            # Usamos un pequeño delay o manejamos la eliminación de forma asíncrona si es necesario
-            # Para este caso, una eliminación directa funcionará si el archivo no está bloqueado
-            try:
-                os.remove(pdf_path)
-            except Exception as e:
-                print(f"Error al eliminar el archivo {pdf_path}: {e}")

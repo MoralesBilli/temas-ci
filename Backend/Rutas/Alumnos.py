@@ -1,6 +1,6 @@
 from Extensiones import db
 from Modelos.Modelos import Alumnos,FactoresDeRiesgo,FactoresPorAlumno
-from flask import jsonify, Blueprint
+from flask import jsonify, Blueprint, request
 from sqlalchemy.orm import joinedload
 Alumnos_bp = Blueprint('alumnos',__name__)
 
@@ -91,4 +91,50 @@ def obtener_factores():
         
         return jsonify([f.to_dict() for f in factores]),200
     except Exception as e:
-        return jsonify({'error':f'Error al obtener los factores {str(e)}'})
+        return jsonify({'error':f'Error al obtener los factores {str(e)}'}),500
+
+
+@Alumnos_bp.route('/api/alumnos/factor-alumno', methods=['POST'])
+def crear_factor_alumno():
+    try:
+        data = request.get_json() or request.form
+        no_control = request.get('no_control','').strip()
+        factores = request.get('id_factor',[])
+
+        if not no_control:
+            return jsonify({'error','Faltan datos: Numero de control'}),400
+        
+        if not factores:
+            return jsonify({'error','No se proporcionan factores de riesgo'})
+        
+        if isinstance(factores, str):
+            # Si llega como cadena (por ejemplo: "1,2,3"), la convertimos a lista
+            factores = [f.strip() for f in factores.split(',') if f.strip().isdigit()]
+
+        alumno = Alumnos.query.filter_by(no_control=no_control).first()
+        if not alumno:
+            return jsonify({'error':f'No se encontro un alumno con el numero de control {no_control}'}),404
+        
+
+        nuevos_registros = []
+        for id_factor in factores:
+            existente = FactoresPorAlumno.query.filter_by(
+                id_factor=id_factor, no_control_alumno=no_control
+            ).first()
+            if not existente:
+                nuevo = FactoresPorAlumno(
+                    id_factor=int(id_factor),
+                    no_control_alumno=no_control
+                )
+                nuevos_registros.append(nuevo)
+
+        if not nuevos_registros:
+            return jsonify({'warning': 'El alumno ya tenía todos los factores asignados.'}), 200
+        
+        db.session.add_all(nuevos_registros)
+        db.session.commit()
+
+        return jsonify({'status':'success','message':'Factor guardado con excito'}),200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error':f'Error al crear el factor alumno {str(e)}'}),500
