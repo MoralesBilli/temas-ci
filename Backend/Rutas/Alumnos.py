@@ -98,8 +98,8 @@ def obtener_factores():
 def crear_factor_alumno():
     try:
         data = request.get_json() or request.form
-        no_control = request.get('no_control','').strip()
-        factores = request.get('id_factor',[])
+        no_control = data.get('no_control','').strip()
+        factores = data.get('id_factor',[])
 
         if not no_control:
             return jsonify({'error','Faltan datos: Numero de control'}),400

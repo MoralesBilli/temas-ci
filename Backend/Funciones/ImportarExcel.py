@@ -220,6 +220,7 @@ def importar_grupos(archivo,carreras,grupos):
     
 def guardar_calificaciones(datos):
     try:
+        cambios = False
         if not isinstance(datos, dict):
             return datos
 
@@ -243,16 +244,17 @@ def guardar_calificaciones(datos):
 
             # Obtener inscripciones del grupo
             inscripciones = Inscripciones.query.filter_by(id_grupo=id_grupo).all()
-            inscripciones_dict = {i.no_control_alumno: i.id for i in inscripciones}
+            inscripciones_dict = {str(i.no_control_alumno): i.id for i in inscripciones}
 
             
-
+            print(inscripciones_dict)
             # Obtener calificaciones existentes del grupo/materia
             calificaciones_existentes = Calificaciones.query.filter(
                 Calificaciones.id_inscripcion.in_(inscripciones_dict.values()),
                 Calificaciones.id_materia == id_materia
             ).all()
             
+            print(calificaciones_existentes)
 
             calificaciones_dict = {
                 (c.id_inscripcion, c.unidad): c for c in calificaciones_existentes
@@ -261,8 +263,11 @@ def guardar_calificaciones(datos):
             # Procesar cada fila del DataFrame
             for _, fila in df.iterrows():
                 no_control = str(fila["No_Control"]).strip()
+                print( f'Numero de control {no_control}')
                 id_inscripcion = inscripciones_dict.get(no_control)
-               
+
+                print(id_inscripcion)
+
                 if id_inscripcion is None:
                     continue  # alumno no inscrito en este grupo
 
@@ -276,6 +281,7 @@ def guardar_calificaciones(datos):
                 if calificacion:
                     calificacion.calificacion = fila["Calificación"]
                     calificacion.no_faltas = fila["No_Faltas"]
+                    cambios = True
                 else:
                     nueva_calificacion = Calificaciones(
                         id_inscripcion=id_inscripcion,
@@ -286,8 +292,11 @@ def guardar_calificaciones(datos):
                     )
                     db.session.add(nueva_calificacion)
                     total_registros += 1
-
-        db.session.commit()
+                    cambios=True
+        if cambios:
+            db.session.commit()
+        else: 
+            return f"No se pudo importar, Ninguna calificacion agregada"
         return f"Calificaciones guardadas correctamente ({total_registros} nuevas)"
 
     except Exception as e:
