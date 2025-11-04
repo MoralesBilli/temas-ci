@@ -1,15 +1,21 @@
-import { Component, ElementRef, inject, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, input, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ToastService } from '../../../core/services/toast-service';
 import { AlumnosService } from '../../services/alumnos-service';
 import { catchError, finalize, of, tap } from 'rxjs';
+import { Alumno } from '../../models/alumnoSchema';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-alumnos-fab',
   imports: [],
   templateUrl: './alumnos-fab.html',
   styleUrl: './alumnos-fab.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlumnosFab {
+  // Alumno seleccionado desde el padre; habilita exportación cuando existe
+  public readonly alumnoSeleccionado = input<Alumno|null>(null);
+
   private fileImportarAlumnos = viewChild.required<ElementRef<HTMLInputElement>>('fileImportarAlumnos');
   private fileImportarCalificaciones = viewChild.required<ElementRef<HTMLInputElement>>('fileImportarCalificaciones');
   private fileImportarDocentes = viewChild.required<ElementRef<HTMLInputElement>>('fileImportarDocentes');
@@ -18,12 +24,26 @@ export class AlumnosFab {
   private toastService = inject(ToastService);
 
   protected handleExportarAlumnos() {
-    if (Math.random() < 0.5) {
-      this.toastService.show('Error al exportar alumnos', 'error');
+    // Seguridad defensiva: no exportar si no hay alumno seleccionado
+    if (!this.alumnoSeleccionado()) {
+      this.toastService.show('Selecciona un alumno para exportar', 'warning');
+      return;
     }
-    else {
-      this.toastService.show('Alumnos exportados exitosamente', 'success')
-    }
+    const alumno = this.alumnoSeleccionado()!;
+    this.alumnosService.exportarReporteTutoria(alumno.numeroDeControl)
+      .pipe(
+        tap((blob) => {
+          const file = new Blob([blob], { type: 'application/pdf' });
+          saveAs(file, `reporte_tutoria_${alumno.numeroDeControl}.pdf`);
+          this.toastService.show('Reporte descargado', 'success');
+        }),
+        catchError((err) => {
+          const msg = err?.error?.error || 'No se pudo descargar el reporte';
+          this.toastService.show(msg, 'error');
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   protected handleImportarAlumnos() {

@@ -3,6 +3,9 @@ import { Alumno, alumnoSchema } from '../models/alumnoSchema';
 import { alumnoDetalleSchema } from '../models/alumnoDetalleSchema';
 import { HttpClient, httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { Observable, of } from 'rxjs';
+
+export type FactorRiesgo = { id: string; nombre: string };
 
 @Injectable({
   providedIn: 'root'
@@ -60,5 +63,32 @@ export class AlumnosService {
       `${this.apiUrl}/importar/docentes`,
       formData
     )
+  }
+
+  exportarReporteTutoria(noControl: string) {
+    const url = `${this.apiUrl}/exportar/reporte_tutoria/${encodeURIComponent(noControl)}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  // Mocks de factores de riesgo y edición de factores en un alumno
+  obtenerFactoresDeRiesgo(): Observable<FactorRiesgo[]> {
+    // TODO: Reemplazar por GET `${this.apiUrl}/factores-riesgo`
+    return of([
+      { id: 'asistencia', nombre: 'Asistencia' },
+      { id: 'bajo-promedio', nombre: 'Bajo promedio' },
+      { id: 'falta-material', nombre: 'Falta de material' },
+      { id: 'problemas-familiares', nombre: 'Problemas familiares' },
+      { id: 'situacion-economica', nombre: 'Situación económica' },
+    ]);
+  }
+
+  agregarFactorRiesgoAlumno(alumnoId: string, factorId: string): Observable<{ ok: true }> {
+    // TODO: Reemplazar por POST `${this.apiUrl}/alumnos/${alumnoId}/factores/${factorId}`
+    return of({ ok: true });
+  }
+
+  quitarFactorRiesgoAlumno(alumnoId: string, factorId: string): Observable<{ ok: true }> {
+    // TODO: Reemplazar por DELETE `${this.apiUrl}/alumnos/${alumnoId}/factores/${factorId}`
+    return of({ ok: true });
   }
 }
