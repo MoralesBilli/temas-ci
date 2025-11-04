@@ -83,3 +83,12 @@ def obtener_alumno_detalle(no_control):
         return jsonify({'ERROR': f'Error al cargar el alumno: {str(e)}'}), 500
 
 #agragar factors
+
+@Alumnos_bp.route('/api/alumnos/factores-riesgo')
+def obtener_factores():
+    try:
+        factores = FactoresDeRiesgo.query.all()
+        
+        return jsonify([f.to_dict() for f in factores]),200
+    except Exception as e:
+        return jsonify({'error':f'Error al obtener los factores {str(e)}'})
