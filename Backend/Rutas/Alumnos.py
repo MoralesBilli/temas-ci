@@ -24,7 +24,6 @@ def obtener_alumnos_factores():
         return jsonify({'ERROR': f'Error al cargar los alumnos: {str(e)}'}), 500
 
 
-
 @Alumnos_bp.route('/api/alumno_detalle/<no_control>', methods=['GET'])
 def obtener_alumno_detalle(no_control):
     try:
@@ -46,31 +45,37 @@ def obtener_alumno_detalle(no_control):
             "inscripciones": []
         }
 
-        # Recorrer inscripciones
+        # Recorrer las inscripciones del alumno
         for inscripcion in alumno.inscripciones:
             grupo = inscripcion.grupo
-            materias = []
-            if grupo:
-                for relacion in grupo.grupos_materias:
-                    materia = relacion.materia
-                    materias.append({
-                        "nombreMateria": materia.nombre,
-                        "serieMateria": materia.serie
-                    })
-                ins = {
-                    "grupo": grupo.grupo if grupo else None,
-                    "materias": materias,
-                    "calificaciones": []
-                }
-            # Calificaciones de esa inscripción
-            for cal in inscripcion.calificaciones:
-                ins['calificaciones'].append({
-                    "unidad": cal.unidad,
-                    "calificacion": cal.calificacion,
-                    "faltas": cal.faltas
-                })
 
-            resultado['inscripciones'].append(ins)
+            if not grupo:
+                continue
+
+            # Recorrer las materias del grupo
+            for relacion in grupo.grupos_materias:
+                materia = relacion.materia
+                if not materia:
+                    continue
+
+                # Filtrar calificaciones correspondientes a esta inscripción
+                calificaciones = [
+                    {
+                        "unidad": cal.unidad,
+                        "calificacion": cal.calificacion,
+                        "faltas": cal.faltas
+                    }
+                    for cal in inscripcion.calificaciones
+                    if cal  # por si acaso
+                ]
+
+                # Agregar la materia (una por objeto)
+                resultado['inscripciones'].append({
+                    "grupo": grupo.grupo,
+                    "nombreMateria": materia.nombre,
+                    "serieMateria": materia.serie,
+                    "calificaciones": calificaciones
+                })
 
         return jsonify(resultado)
 
