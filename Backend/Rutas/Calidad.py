@@ -27,14 +27,17 @@ def obtener_datos_histograma():
 def obtener_datos_pareto():
     try:
         factor_alumno = FactoresPorAlumno.query.all()
+      
         conteo = {}
         for f in factor_alumno:
+
             fac_nombre = f.factor.nombre if f.factor else "Desconocido"
+           
             conteo[fac_nombre] = conteo.get(fac_nombre, 0) + 1
 
             resultado = [{'factor':nombre,'qty':qty} for nombre, qty in sorted(conteo.items())]
 
-            return jsonify(resultado)
+        return jsonify(resultado)
 
 
     except Exception as e:
