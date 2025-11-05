@@ -93,40 +93,19 @@ export class AlumnoDetalle {
     const det = this.detalle();
     if (!det) return;
     const catalogo = this.factoresCatalogo();
-    // IDs actuales a partir de nombres del detalle
-    const actuales = new Set(
-      det.factoresDeRiesgo
-        .map(nombre => catalogo.find(f => f.nombre === nombre)?.id)
-        .filter((id): id is string => !!id)
-    );
-    const seleccion = this.seleccionados();
-
-    const agregar: string[] = [];
-    const quitar: string[] = [];
-    for (const id of seleccion) if (!actuales.has(id)) agregar.push(id);
-    for (const id of actuales) if (!seleccion.has(id)) quitar.push(id);
-
-    const alumnoId = det.numeroDeControl;
-    const ops = [
-      ...agregar.map(id => this.alumnosService.agregarFactorRiesgoAlumno(alumnoId, id)),
-      ...quitar.map(id => this.alumnosService.quitarFactorRiesgoAlumno(alumnoId, id)),
-    ];
-
-    if (ops.length === 0) {
-      this.toast.show('Sin cambios', 'info');
-      this.editMode.set(false);
-      return;
-    }
-
-    forkJoin(ops).subscribe({
-      next: () => {
-        this.toast.show('Factores actualizados', 'success');
-        this.alumnosService.alumnoSeleccionadoDetalle.reload();
-        this.editMode.set(false);
-      },
-      error: () => {
-        this.toast.show('No se pudieron actualizar los factores', 'error');
-      }
-    });
+    // Enviar selección completa (sobrescribe backend)
+    const seleccion = Array.from(this.seleccionados());
+    this.alumnosService.actualizarFactoresRiesgoAlumno(det.numeroDeControl, seleccion)
+      .subscribe({
+        next: () => {
+          this.toast.show('Factores actualizados', 'success');
+          this.alumnosService.alumnoSeleccionadoDetalle.reload();
+          this.alumnosService.alumnos.reload();
+          this.editMode.set(false);
+        },
+        error: () => {
+          this.toast.show('No se pudieron actualizar los factores', 'error');
+        }
+      });
   }
 }

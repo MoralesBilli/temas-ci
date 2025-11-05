@@ -70,25 +70,15 @@ export class AlumnosService {
     return this.http.get(url, { responseType: 'blob' });
   }
 
-  // Mocks de factores de riesgo y edición de factores en un alumno
+  // Factores de riesgo (endpoints reales)
   obtenerFactoresDeRiesgo(): Observable<FactorRiesgo[]> {
-    // TODO: Reemplazar por GET `${this.apiUrl}/factores-riesgo`
-    return of([
-      { id: 'asistencia', nombre: 'Asistencia' },
-      { id: 'bajo-promedio', nombre: 'Bajo promedio' },
-      { id: 'falta-material', nombre: 'Falta de material' },
-      { id: 'problemas-familiares', nombre: 'Problemas familiares' },
-      { id: 'situacion-economica', nombre: 'Situación económica' },
-    ]);
+    return this.http.get<FactorRiesgo[]>(`${this.apiUrl}/alumnos/factores-riesgo`);
   }
 
-  agregarFactorRiesgoAlumno(alumnoId: string, factorId: string): Observable<{ ok: true }> {
-    // TODO: Reemplazar por POST `${this.apiUrl}/alumnos/${alumnoId}/factores/${factorId}`
-    return of({ ok: true });
-  }
-
-  quitarFactorRiesgoAlumno(alumnoId: string, factorId: string): Observable<{ ok: true }> {
-    // TODO: Reemplazar por DELETE `${this.apiUrl}/alumnos/${alumnoId}/factores/${factorId}`
-    return of({ ok: true });
+  actualizarFactoresRiesgoAlumno(noControl: string, factoresIds: string[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/alumnos/factor-alumno`, {
+      no_control: noControl,
+      id_factor: factoresIds,
+    });
   }
 }
