@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 
-export type JwtResponse = { token?: string; jwt?: string; access_token?: string; acceso?: boolean; message?: string } & Record<string, unknown>;
-export interface JwtPayload { id?: number; doce?: number; exp?: number }
+export type JwtResponse = { token?: string; jwt?: string; access_token?: string; acceso?: boolean; message?: string; rol?: string } & Record<string, unknown>;
+export interface JwtPayload { id?: number; doce?: number; exp?: number; rol?: string }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -26,6 +26,14 @@ export class AuthService {
       return null;
     }
   });
+
+  readonly rol = computed<string | null>(() => {
+    const decoded = this.decoded();
+    return decoded?.rol || null;
+  });
+
+  readonly isAdmin = computed(() => this.rol() === 'ADMINISTRADOR');
+  readonly isDocente = computed(() => this.rol() === 'DOCENTE');
 
   constructor(private http: HttpClient) {}
 

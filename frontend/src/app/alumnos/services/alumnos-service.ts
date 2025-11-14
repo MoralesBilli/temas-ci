@@ -5,6 +5,7 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable, of } from 'rxjs';
 import { z } from 'zod';
+import { AuthService } from '../../core/services/auth-service';
 
 export type FactorRiesgo = { id: string; nombre: string };
 
@@ -27,6 +28,7 @@ export type Grupo = z.infer<typeof grupoSchema>;
 export class AlumnosService {
   private readonly apiUrl = environment.apiUrl
   private readonly http = inject(HttpClient)
+  private readonly authService = inject(AuthService)
 
   readonly materiaSeleccionada = signal<Materia | null>(null);
   readonly grupoSeleccionado = signal<Grupo | null>(null);
@@ -49,6 +51,14 @@ export class AlumnosService {
 
   readonly alumnos = httpResource(
     () => {
+      const isAdmin = this.authService.isAdmin();
+      
+    
+      if (isAdmin) {
+        return `${this.apiUrl}/alumnos`;
+      }
+      
+    
       const materia = this.materiaSeleccionada();
       const grupo = this.grupoSeleccionado();
       
@@ -72,10 +82,18 @@ export class AlumnosService {
   readonly alumnoSeleccionadoDetalle = httpResource(
     () => {
       const numeroDeControl = this.alumnoSeleccionado()?.numeroDeControl;
+      if (!numeroDeControl) return
+      
+      const isAdmin = this.authService.isAdmin();
+      
+      if (isAdmin) {
+        return `${this.apiUrl}/alumno_detalle/${numeroDeControl}`
+      }
+      
       const materia = this.materiaSeleccionada();
       const id_materia = materia?.id.toString();
       
-      if (!numeroDeControl || ! id_materia) return
+      if (!id_materia) return
 
       return `${this.apiUrl}/alumno_detalle/${numeroDeControl}?id_materia=${id_materia}`
     },

@@ -5,6 +5,7 @@ import { AlumnoDetalle } from '../components/alumno-detalle/alumno-detalle';
 import { AlumnosService, Materia, Grupo } from '../services/alumnos-service';
 import { Alumno } from '../models/alumnoSchema';
 import { AlumnosFab } from '../components/alumnos-fab/alumnos-fab';
+import { AuthService } from '../../core/services/auth-service';
 
 @Component({
   selector: 'app-alumnos-page',
@@ -15,6 +16,7 @@ import { AlumnosFab } from '../components/alumnos-fab/alumnos-fab';
 export class AlumnosPage {
   private readonly layoutService = inject(LayoutService);
   private readonly alumnosService = inject(AlumnosService);
+  private readonly authService = inject(AuthService);
 
   protected readonly alumnos = this.alumnosService.alumnos;
   protected readonly alumnoSeleccionado = this.alumnosService.alumnoSeleccionado;
@@ -23,6 +25,8 @@ export class AlumnosPage {
   protected readonly grupos = this.alumnosService.grupos;
   protected readonly materiaSeleccionada = this.alumnosService.materiaSeleccionada;
   protected readonly grupoSeleccionado = this.alumnosService.grupoSeleccionado;
+  protected readonly isAdmin = this.authService.isAdmin;
+  protected readonly isDocente = this.authService.isDocente;
 
   protected handleAlumnoSeleccionadoChange(alumno: Alumno) {
     this.alumnosService.alumnoSeleccionado.set(alumno);

@@ -11,15 +11,36 @@ from Funciones.Decodificar import token_required
 @token_required
 def obtener_alumnos_factores(id_login):
     try:
-        id_materia = request.args.get("id_materia", type=int)
-        id_grupo = request.args.get("id_grupo", type=int)
-
+        
         docente = Inicio_Sesion.query.filter_by(id=id_login).first()
         if not docente:
             raise ValueError("No se encontró el docente con ese ID de sesión.")
-        id_docente=docente.id_docente
         
-        # Traer todos los alumnos
+        rol = docente.docente.rol if docente.docente else 'DOCENTE'
+        id_materia = request.args.get("id_materia", type=int)
+        id_grupo = request.args.get("id_grupo", type=int)
+        
+
+        if rol == 'ADMINISTRADOR':
+            alumnos = Alumnos.query.all()
+            resultado = []
+            for a in alumnos:
+                resultado.append({
+                    "numeroDeControl": a.no_control,
+                    "nombre": a.nombre,
+                    "apellidoPaterno": a.apellido_paterno,
+                    "apellidoMaterno": a.apellido_materno,
+                    "factoresDeRiesgo": [f.factor.nombre for f in a.factores_de_riesgo]
+                })
+            return jsonify(resultado), 200
+        
+        
+        id_docente = docente.id_docente
+        
+    
+        if not id_materia or not id_grupo:
+            return jsonify({'ERROR': 'Se requieren id_materia e id_grupo para docentes'}), 400
+        
         alumnos = (
             db.session.query(Alumnos)
             .join(Inscripciones, Inscripciones.no_control_alumno == Alumnos.no_control)
@@ -49,15 +70,20 @@ def obtener_alumnos_factores(id_login):
 
 
 @Alumnos_bp.route('/api/alumno_detalle/<no_control>', methods=['GET'])
-def obtener_alumno_detalle(no_control):
+@token_required
+def obtener_alumno_detalle(no_control, id_login):
     try:
         alumno = Alumnos.query.filter_by(no_control=no_control).first()
         if not alumno:
             return jsonify({'ERROR': 'Alumno no encontrado'}), 404
         
+        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
+        if not docente or not docente.docente:
+            return jsonify({'ERROR': 'Usuario no encontrado'}), 401
+        
+        rol = docente.docente.rol if docente.docente else 'DOCENTE'
         id_materia = request.args.get("id_materia", type=int)
 
-        print(id_materia)
         resultado = {
             "numeroDeControl": alumno.no_control,
             "nombre": alumno.nombre,
@@ -72,7 +98,11 @@ def obtener_alumno_detalle(no_control):
             "inscripciones": []
         }
 
-        # Recorrer las inscripciones del alumno
+       
+        if rol == 'DOCENTE' and not id_materia:
+            return jsonify({'ERROR': 'Se requiere id_materia para docentes'}), 400
+
+        
         for inscripcion in alumno.inscripciones:
             grupo = inscripcion.grupo
 
@@ -83,9 +113,12 @@ def obtener_alumno_detalle(no_control):
             for relacion in grupo.grupos_materias:
                 materia = relacion.materia
 
-                if not materia or materia.id != id_materia:
+                if not materia:
                     continue
                 
+                
+                if rol == 'DOCENTE' and materia.id != id_materia:
+                    continue
                 
                 
                 calificaciones = [
@@ -95,10 +128,9 @@ def obtener_alumno_detalle(no_control):
                         "faltas": cal.faltas
                     }
                     for cal in inscripcion.calificaciones
-                    if cal   and cal.id_materia == id_materia
+                    if cal and cal.id_materia == materia.id
                 ]
 
-               
                 resultado['inscripciones'].append({
                     "grupo": grupo.grupo,
                     "nombreMateria": materia.nombre,

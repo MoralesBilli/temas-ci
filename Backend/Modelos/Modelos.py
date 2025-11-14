@@ -214,10 +214,12 @@ class Docente(db.Model):
     apellido_materno = db.Column(db.String(64), nullable=False)
     num_telefono = db.Column(db.String(18), nullable=False)
     correo = db.Column(db.Text, nullable = False)
+    rol = db.Column(db.String(20), nullable=False, default='DOCENTE')
 
     def to_dict(self):
             return {
-                'clave_docente':self.clave_docente
+                'clave_docente':self.clave_docente,
+                'rol': self.rol
             }
 
 

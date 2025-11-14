@@ -1,18 +1,34 @@
-import { Injectable, resource } from '@angular/core';
+import { Injectable, inject, resource } from '@angular/core';
 import { sleep } from '../../core/utils/asyncUtils';
 import { datoControl, datoDispersion, datoHistograma, datoPareto } from '../models/graficas';
 import { httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { AlumnosService } from '../../alumnos/services/alumnos-service'; 
+import { AlumnosService } from '../../alumnos/services/alumnos-service';
+import { AuthService } from '../../core/services/auth-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalidadService {
   private readonly apiUrl = environment.apiUrl
+  private readonly alumnosService = inject(AlumnosService)
+  private readonly authService = inject(AuthService)
 
   readonly datosHistograma = httpResource(
-    () => `${this.apiUrl}/calidad/histograma`,
+    () => {
+      const url = new URL(`${this.apiUrl}/calidad/histograma`);
+      const isAdmin = this.authService.isAdmin();
+      
+   
+      if (!isAdmin) {
+        const materia = this.alumnosService.materiaSeleccionada();
+        if (materia) {
+          url.searchParams.set('id_materia', materia.id.toString());
+        }
+      }
+      
+      return url.toString();
+    },
     {
       parse: data => datoHistograma.array().parse(data),
       defaultValue: []
@@ -28,7 +44,19 @@ export class CalidadService {
   )
 
   readonly datosDispersion = httpResource(
-    () => `${this.apiUrl}/calidad/dispersion`,
+    () => {
+      const url = new URL(`${this.apiUrl}/calidad/dispersion`);
+      const isAdmin = this.authService.isAdmin();
+      
+      if (!isAdmin) {
+        const materia = this.alumnosService.materiaSeleccionada();
+        if (materia) {
+          url.searchParams.set('id_materia', materia.id.toString());
+        }
+      }
+      
+      return url.toString();
+    },
     {
       parse: data => datoDispersion.array().parse(data),
       defaultValue: []
@@ -36,7 +64,19 @@ export class CalidadService {
   )
 
   readonly datosControl = httpResource(
-    () => `${this.apiUrl}/calidad/control`,
+    () => {
+      const url = new URL(`${this.apiUrl}/calidad/control`);
+      const isAdmin = this.authService.isAdmin();
+      
+      if (!isAdmin) {
+        const materia = this.alumnosService.materiaSeleccionada();
+        if (materia) {
+          url.searchParams.set('id_materia', materia.id.toString());
+        }
+      }
+      
+      return url.toString();
+    },
     {
       parse: data => datoControl.array().parse(data),
       defaultValue: []

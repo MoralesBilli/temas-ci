@@ -21,14 +21,24 @@ def login():
             return jsonify({'error':'Usuario no encontrado'}),401
         
         primera_vez = inicio.primera_vez
+        
+        
+        rol = inicio.docente.rol if inicio.docente else 'DOCENTE'
 
         if bcrypt.checkpw(contraseña.encode('utf-8'), inicio.contrasena.encode('utf-8')):
             token = jwt.encode({
                 'id':inicio.id,
                 'doce':inicio.id_docente,
+                'rol': rol,
                 'exp':datetime.utcnow() + timedelta(hours=8)
             }, current_app.config['SECRET_KEY'], algorithm='HS256') 
-            return jsonify({"success": True, "message": "Login exitoso", "token": token, 'acceso':primera_vez}),200
+            return jsonify({
+                "success": True, 
+                "message": "Login exitoso", 
+                "token": token, 
+                'acceso':primera_vez,
+                'rol': rol
+            }),200
         else:
             return jsonify({"success": False, "error": "Credenciales incorrectas"}), 401
         

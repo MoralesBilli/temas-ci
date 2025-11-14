@@ -1,45 +1,55 @@
-<div class="mb-4 flex gap-4">
-  <div class="form-control w-full max-w-xs">
-    <label class="label">
-      <span class="label-text">Materia</span>
-    </label>
-    <select 
-      class="select select-bordered w-full"
-      [value]="materiaSeleccionada()?.id || ''"
-      (change)="handleMateriaChange($event)"
-    >
-      <option value="">Seleccione una materia</option>
-      @if (materias.hasValue()) {
-        @for (materia of materias.value(); track materia.id) {
-          <option [value]="materia.id">{{ materia.Nombre }}</option>
+
+@if (isDocente()) {
+  <div class="mb-4 flex gap-4">
+    <div class="form-control w-full max-w-xs">
+      <label class="label">
+        <span class="label-text">Materia</span>
+      </label>
+      <select 
+        class="select select-bordered w-full"
+        [value]="materiaSeleccionada()?.id || ''"
+        (change)="handleMateriaChange($event)"
+      >
+        <option value="">Seleccione una materia</option>
+        @if (materias.hasValue()) {
+          @for (materia of materias.value(); track materia.id) {
+            <option [value]="materia.id">{{ materia.Nombre }}</option>
+          }
         }
-      }
-    </select>
-  </div>
-  
-  <div class="form-control w-full max-w-xs">
-    <label class="label">
-      <span class="label-text">Grupo</span>
-    </label>
-    <select 
-      class="select select-bordered w-full"
-      [value]="grupoSeleccionado()?.id || ''"
-      (change)="handleGrupoChange($event)"
-      [disabled]="!materiaSeleccionada()"
-    >
-      <option value="">Seleccione un grupo</option>
-      @if (grupos.hasValue()) {
-        @for (grupo of grupos.value(); track grupo.id) {
-          <option [value]="grupo.id">{{ grupo.Nombre }}</option>
+      </select>
+    </div>
+    
+    <div class="form-control w-full max-w-xs">
+      <label class="label">
+        <span class="label-text">Grupo</span>
+      </label>
+      <select 
+        class="select select-bordered w-full"
+        [value]="grupoSeleccionado()?.id || ''"
+        (change)="handleGrupoChange($event)"
+        [disabled]="!materiaSeleccionada()"
+      >
+        <option value="">Seleccione un grupo</option>
+        @if (grupos.hasValue()) {
+          @for (grupo of grupos.value(); track grupo.id) {
+            <option [value]="grupo.id">{{ grupo.Nombre }}</option>
+          }
         }
-      }
-    </select>
+      </select>
+    </div>
   </div>
-</div>
+}
+
+<!-- Mostrar mensaje si es admin -->
+@if (isAdmin()) {
+  <div class="mb-4 alert alert-info">
+    <span>Vista de administrador: Se muestran todos los alumnos</span>
+  </div>
+}
 
 <section class="grid gap-4 grid-cols-12">
 	<article class="col-span-4">
-    @if (materiaSeleccionada() && grupoSeleccionado()) {
+    @if (isAdmin() || (materiaSeleccionada() && grupoSeleccionado())) {
       @if (alumnos.hasValue()) {
         <app-alumnos-list
           [alumnos]="alumnos.value()"
