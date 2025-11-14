@@ -3,6 +3,7 @@ import { sleep } from '../../core/utils/asyncUtils';
 import { datoControl, datoDispersion, datoHistograma, datoPareto } from '../models/graficas';
 import { httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { AlumnosService } from '../../alumnos/services/alumnos-service'; 
 
 @Injectable({
   providedIn: 'root'

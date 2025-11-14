@@ -47,13 +47,17 @@ def obtener_alumnos_factores(id_login):
         print(f'Error {str(e)}')
         return jsonify({'ERROR': f'Error al cargar los alumnos: {str(e)}'}), 500
 
+
 @Alumnos_bp.route('/api/alumno_detalle/<no_control>', methods=['GET'])
 def obtener_alumno_detalle(no_control):
     try:
         alumno = Alumnos.query.filter_by(no_control=no_control).first()
         if not alumno:
             return jsonify({'ERROR': 'Alumno no encontrado'}), 404
+        
+        id_materia = request.args.get("id_materia", type=int)
 
+        print(id_materia)
         resultado = {
             "numeroDeControl": alumno.no_control,
             "nombre": alumno.nombre,
@@ -78,10 +82,12 @@ def obtener_alumno_detalle(no_control):
             # Recorrer las materias del grupo
             for relacion in grupo.grupos_materias:
                 materia = relacion.materia
-                if not materia:
-                    continue
 
-                # Filtrar calificaciones correspondientes a esta inscripción
+                if not materia or materia.id != id_materia:
+                    continue
+                
+                
+                
                 calificaciones = [
                     {
                         "unidad": cal.unidad,
@@ -89,10 +95,10 @@ def obtener_alumno_detalle(no_control):
                         "faltas": cal.faltas
                     }
                     for cal in inscripcion.calificaciones
-                    if cal  # por si acaso
+                    if cal   and cal.id_materia == id_materia
                 ]
 
-                # Agregar la materia (una por objeto)
+               
                 resultado['inscripciones'].append({
                     "grupo": grupo.grupo,
                     "nombreMateria": materia.nombre,

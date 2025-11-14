@@ -53,7 +53,7 @@ export class AlumnosService {
       const grupo = this.grupoSeleccionado();
       
       if (!materia || !grupo) {
-        return undefined; // No cargar alumnos si no hay materia o grupo seleccionados
+        return undefined; 
       }
 
       const params = new URLSearchParams({
@@ -72,9 +72,12 @@ export class AlumnosService {
   readonly alumnoSeleccionadoDetalle = httpResource(
     () => {
       const numeroDeControl = this.alumnoSeleccionado()?.numeroDeControl;
-      if (!numeroDeControl) return
+      const materia = this.materiaSeleccionada();
+      const id_materia = materia?.id.toString();
+      
+      if (!numeroDeControl || ! id_materia) return
 
-      return `${this.apiUrl}/alumno_detalle/${numeroDeControl}`
+      return `${this.apiUrl}/alumno_detalle/${numeroDeControl}?id_materia=${id_materia}`
     },
     {
       parse: data => alumnoDetalleSchema.parse(data),
