@@ -242,9 +242,11 @@ class grupos_materias(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     id_grupo=db.Column(db.Integer,db.ForeignKey('grupos.id'),nullable=False)
     id_materia = db.Column(db.Integer,db.ForeignKey('materias.id'),nullable=False)
+    id_docente = db.Column(db.Integer, db.ForeignKey('docente.clave_docente'),nullable=False)
 
     #grupo = db.relationship('Grupos', backref='grupos_materias')
     materia = db.relationship('Materias', backref='grupos_materias')
+    docente = db.relationship('Docente',backref='grupos_materias')
 
     def to_dict(self):
         return{

@@ -20,19 +20,21 @@ def crear_docente():
         patron_correo = r'^[a-zA-Z0-9._%+-]+@tectijuana\.edu\.mx$'
 
         nombres = {'Nombre':nombre,'Apellido paterno':apellido_paterno,'Apellido materno': apellido_materno}
-        #validaciones
-        if not re.match(patron_correo,correo):
-            return jsonify({'error':'Formato de correo incorrecto'})
-        
+
         for etiqueta, n in nombres.items():
             if not  re.match(patron_nombre,n):
-                return jsonify({'error':f'Formato de nombre {n}'})
+                return jsonify({'error':f'Formato de {etiqueta} incorrecto'}),400
+        #validaciones
+        if not re.match(patron_correo,correo):
+            return jsonify({'error':'Formato de correo incorrecto'}),400
+        
+
         
         if len(str(num_telefono)) != 10:
-            return jsonify({'error':'Numero de telefono es incorrecto'})
+            return jsonify({'error':'Numero de telefono es incorrecto'}),400
         
         if not str(clave_docente).isdigit():
-            return jsonify({'error':'La calve debe de ser numerica'})
+            return jsonify({'error':'La calve debe de ser numerica'}),400
 
         exito, mensaje = crear_docente2(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo)
         if exito:
@@ -44,4 +46,4 @@ def crear_docente():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error':'Error al registrar al docente'})
+        return jsonify({'error':'Error al registrar al docente'}),500

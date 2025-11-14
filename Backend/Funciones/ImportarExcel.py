@@ -1,6 +1,6 @@
 import pandas as pd
 from Extensiones import db
-from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Grupos,Materias,Docente
+from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Grupos,Materias,Docente,grupos_materias
 import re
 from Funciones.Agregar_docente import crear_docente
 #Lectura del archivo excel
@@ -130,10 +130,10 @@ def importar_docentes(archivo):
     resultado = guardad_docentes(contenido)
     return resultado
 
-def importar_grupos(archivo,carreras,grupos):
+def importar_grupos(archivo,carreras,grupos,materias,clave_docente):
     
     contenido = {}
-    lista_informacion = {"Carrera":carreras, "Grupo": grupos}
+    lista_informacion = {"Carrera":carreras, "Grupo": grupos, "Materia":materias}
     columnas_existentes = ["Carrera","Grupo"]
     Genero = ['HOMBRE','MUJER']
     Estado_valido = ['VIGENTE', 'EGRESADO', 'BAJA_TEMPORAL', 'BAJA_DEFINITIVA']
@@ -165,6 +165,8 @@ def importar_grupos(archivo,carreras,grupos):
                             return "No se pudo importar: carrera no encontrada"
                         elif coex == "Grupo" and invalidas.any():
                             return "No se pudo importar: grupo no encontrado"
+                        elif coex == "Materia" and invalidas.any():
+                            return "No se pudo importar: materia no encontrada"
 
                         
                 #Revisa que el semestre sea numero
@@ -214,7 +216,7 @@ def importar_grupos(archivo,carreras,grupos):
     except Exception as e:
         return f'Error al importar el archivo: {str(e)}'
     
-    resultado = Guardar_Datos_grupos(contenido)
+    resultado = Guardar_Datos_grupos(contenido,clave_docente)
     
     return resultado
     
@@ -281,8 +283,9 @@ def guardar_calificaciones(datos):
 
                 if calificacion:
                     calificacion.calificacion = fila["Calificación"]
-                    calificacion.no_faltas = fila["No_Faltas"]
+                    calificacion.faltas = fila["No_Faltas"]
                     cambios = True
+
                 else:
                     nueva_calificacion = Calificaciones(
                         id_inscripcion=id_inscripcion,
@@ -306,13 +309,16 @@ def guardar_calificaciones(datos):
 
     
 
-def Guardar_Datos_grupos(datos):
+def Guardar_Datos_grupos(datos,clave_docente):
 
     try:
         if isinstance(datos,dict):
             
             carreras = {carrera.nombre: carrera.id for carrera in Carreras.query.all()}
             grupos = {grupo.grupo: grupo.id for grupo in Grupos.query.all()}
+            materias = {materia.nombre: materia.id for materia in Materias.query.all()}
+            
+
             cambios = False
             
             for hoja, df in  datos.items():
@@ -324,10 +330,14 @@ def Guardar_Datos_grupos(datos):
                     id_carrera = carreras.get(nombre_carrera)
                     nombre_grupo = fila["Grupo"]
                     id_grupo = grupos.get(nombre_grupo)
+                    nombre_materia = fila["Materia"]
+                    id_materia = materias.get(nombre_materia)
                
                     #guardado enla base de datos faltan los modelos
                     no_control = str(fila["No_Control"]).strip()
                     semestre_valido = str(int(fila["Semestre"]))
+
+                    
 
                     if not Alumnos.query.get(no_control):
 
@@ -345,13 +355,31 @@ def Guardar_Datos_grupos(datos):
                         cambios = True
                        
                    
+                    grupo_materia_existente = grupos_materias.query.filter_by(
+                        id_grupo = id_grupo,
+                        id_materia = id_materia
+                    ).first()
 
                     inscripcion_existente = Inscripciones.query.filter_by(
                         id_grupo=id_grupo,
                         no_control_alumno=no_control
                     ).first()
 
-                   
+                    if not grupo_materia_existente:
+
+                        nevo_grupo_materia = grupos_materias(
+                            id_grupo = id_grupo,
+                            id_materia = id_materia,
+                            id_docente = clave_docente
+                        )
+                        db.session.add(nevo_grupo_materia)
+                        cambios = True
+                    else:
+                         if grupo_materia_existente.id_docente != clave_docente:
+                            grupo_materia_existente.id_docente = clave_docente
+                            cambios = True
+                        
+
                     if not inscripcion_existente:
                             nueva_inscripcion = Inscripciones(
                                 id_grupo = id_grupo,
@@ -359,6 +387,8 @@ def Guardar_Datos_grupos(datos):
                             )
                             db.session.add(nueva_inscripcion)
                             cambios = True
+                    
+
             if cambios:     
                 db.session.commit()
                 return "Guardado correctamente"

@@ -21,10 +21,16 @@ def importar_Excel_grupos(id_login):
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         carreras =  Carreras.query.all()
         grupos = Grupos.query.all()
-
+        materias = Materias.query.all()
         carreras_nombres = [carrera.nombre for carrera in carreras]
         grupos_nombres = [grupo.grupo for grupo in grupos]
+        materias_nomres = [materia.nombre for materia in materias]
 
+        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
+        if not docente:
+            raise ValueError("No se encontró el docente con ese ID de sesión.")
+        clave_docente = docente.docente.clave_docente
+        
         #validaciones 
         if 'archivo' not in request.files:
             return jsonify({'error': 'No fue enviaddo un archivo'}),400
@@ -41,7 +47,7 @@ def importar_Excel_grupos(id_login):
         ruta = os.path.join(UPLOAD_FOLDER, archivo.filename)
         archivo.save(ruta)
 
-        procesamiento = importar_grupos(ruta,carreras_nombres,grupos_nombres)
+        procesamiento = importar_grupos(ruta,carreras_nombres,grupos_nombres,materias_nomres,clave_docente)
        
         print(procesamiento)
         os.remove(ruta)
@@ -49,9 +55,7 @@ def importar_Excel_grupos(id_login):
         if procesamiento.startswith("No se pudo importar") or "Error" in procesamiento:
             return jsonify({'error': procesamiento}), 400
         
-        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
-        if not docente:
-            raise ValueError("No se encontró el docente con ese ID de sesión.")
+        
 
         id_docente=docente.id_docente
 

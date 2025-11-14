@@ -1,11 +1,67 @@
+<div class="mb-4 flex gap-4">
+  <div class="form-control w-full max-w-xs">
+    <label class="label">
+      <span class="label-text">Materia</span>
+    </label>
+    <select 
+      class="select select-bordered w-full"
+      [value]="materiaSeleccionada()?.id || ''"
+      (change)="handleMateriaChange($event)"
+    >
+      <option value="">Seleccione una materia</option>
+      @if (materias.hasValue()) {
+        @for (materia of materias.value(); track materia.id) {
+          <option [value]="materia.id">{{ materia.Nombre }}</option>
+        }
+      }
+    </select>
+  </div>
+  
+  <div class="form-control w-full max-w-xs">
+    <label class="label">
+      <span class="label-text">Grupo</span>
+    </label>
+    <select 
+      class="select select-bordered w-full"
+      [value]="grupoSeleccionado()?.id || ''"
+      (change)="handleGrupoChange($event)"
+      [disabled]="!materiaSeleccionada()"
+    >
+      <option value="">Seleccione un grupo</option>
+      @if (grupos.hasValue()) {
+        @for (grupo of grupos.value(); track grupo.id) {
+          <option [value]="grupo.id">{{ grupo.Nombre }}</option>
+        }
+      }
+    </select>
+  </div>
+</div>
+
 <section class="grid gap-4 grid-cols-12">
 	<article class="col-span-4">
-    @if (alumnos.hasValue()) {
-      <app-alumnos-list
-        [alumnos]="alumnos.value()"
-        [alumnoSeleccionado]="alumnoSeleccionado()"
-        (alumnoSeleccionadoChange)="handleAlumnoSeleccionadoChange($event)"
-      />
+    @if (materiaSeleccionada() && grupoSeleccionado()) {
+      @if (alumnos.hasValue()) {
+        <app-alumnos-list
+          [alumnos]="alumnos.value()"
+          [alumnoSeleccionado]="alumnoSeleccionado()"
+          (alumnoSeleccionadoChange)="handleAlumnoSeleccionadoChange($event)"
+        />
+      } @else if (alumnos.isLoading()) {
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <span class="loading loading-spinner loading-lg"></span>
+            <p>Cargando alumnos...</p>
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <div class="alert alert-info">
+            <span>Por favor, seleccione una materia y un grupo para ver los alumnos.</span>
+          </div>
+        </div>
+      </div>
     }
 	</article>
 	<article class="col-span-8">

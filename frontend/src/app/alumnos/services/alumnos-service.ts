@@ -4,8 +4,22 @@ import { alumnoDetalleSchema } from '../models/alumnoDetalleSchema';
 import { HttpClient, httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable, of } from 'rxjs';
+import { z } from 'zod';
 
 export type FactorRiesgo = { id: string; nombre: string };
+
+const materiaSchema = z.object({
+  id: z.number(),
+  Nombre: z.string(),
+});
+
+const grupoSchema = z.object({
+  id: z.number(),
+  Nombre: z.string(),
+});
+
+export type Materia = z.infer<typeof materiaSchema>;
+export type Grupo = z.infer<typeof grupoSchema>;
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +28,41 @@ export class AlumnosService {
   private readonly apiUrl = environment.apiUrl
   private readonly http = inject(HttpClient)
 
+  readonly materiaSeleccionada = signal<Materia | null>(null);
+  readonly grupoSeleccionado = signal<Grupo | null>(null);
+
+  readonly materias = httpResource(
+    () => `${this.apiUrl}/alumnos/materias`,
+    {
+      parse: data => materiaSchema.array().parse(data),
+      defaultValue: [],
+    }
+  );
+
+  readonly grupos = httpResource(
+    () => `${this.apiUrl}/alumnos/grupos`,
+    {
+      parse: data => grupoSchema.array().parse(data),
+      defaultValue: [],
+    }
+  );
+
   readonly alumnos = httpResource(
-    () => `${this.apiUrl}/alumnos`,
+    () => {
+      const materia = this.materiaSeleccionada();
+      const grupo = this.grupoSeleccionado();
+      
+      if (!materia || !grupo) {
+        return undefined; // No cargar alumnos si no hay materia o grupo seleccionados
+      }
+
+      const params = new URLSearchParams({
+        id_materia: materia.id.toString(),
+        id_grupo: grupo.id.toString(),
+      });
+
+      return `${this.apiUrl}/alumnos?${params.toString()}`;
+    },
     {
       parse: data => alumnoSchema.array().parse(data),
     }

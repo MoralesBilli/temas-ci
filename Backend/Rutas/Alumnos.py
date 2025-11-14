@@ -1,14 +1,37 @@
 from Extensiones import db
-from Modelos.Modelos import Alumnos,FactoresDeRiesgo,FactoresPorAlumno
+from Modelos.Modelos import Alumnos,FactoresDeRiesgo,FactoresPorAlumno,Inicio_Sesion,Inscripciones,Grupos,grupos_materias,Materias,Grupos
 from flask import jsonify, Blueprint, request
 from sqlalchemy.orm import joinedload
 Alumnos_bp = Blueprint('alumnos',__name__)
+from Funciones.Decodificar import token_required
+
+
 
 @Alumnos_bp.route('/api/alumnos',methods=['GET'])
-def obtener_alumnos_factores():
+@token_required
+def obtener_alumnos_factores(id_login):
     try:
+        id_materia = request.args.get("id_materia", type=int)
+        id_grupo = request.args.get("id_grupo", type=int)
+
+        docente = Inicio_Sesion.query.filter_by(id=id_login).first()
+        if not docente:
+            raise ValueError("No se encontró el docente con ese ID de sesión.")
+        id_docente=docente.id_docente
+        
         # Traer todos los alumnos
-        alumnos = Alumnos.query.all()
+        alumnos = (
+            db.session.query(Alumnos)
+            .join(Inscripciones, Inscripciones.no_control_alumno == Alumnos.no_control)
+            .join(Grupos, Grupos.id == Inscripciones.id_grupo)
+            .join(grupos_materias, grupos_materias.id_grupo == Grupos.id)
+            .filter(
+                grupos_materias.id_docente == id_docente,
+                grupos_materias.id_materia == id_materia,
+                grupos_materias.id_grupo == id_grupo
+            )
+            .all()
+        )
 
         resultado = []
         for a in alumnos:
@@ -19,10 +42,10 @@ def obtener_alumnos_factores():
                 "apellidoMaterno": a.apellido_materno,  # si es None, JSON lo mantiene
                 "factoresDeRiesgo": [f.factor.nombre for f in a.factores_de_riesgo]
             })
-        return jsonify(resultado)
+        return jsonify(resultado),200
     except Exception as e:
+        print(f'Error {str(e)}')
         return jsonify({'ERROR': f'Error al cargar los alumnos: {str(e)}'}), 500
-
 
 @Alumnos_bp.route('/api/alumno_detalle/<no_control>', methods=['GET'])
 def obtener_alumno_detalle(no_control):
@@ -138,3 +161,34 @@ def crear_factor_alumno():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error':f'Error al crear el factor alumno {str(e)}'}),500
+    
+
+@Alumnos_bp.route('/api/alumnos/materias', methods=['GET'])
+def get_materias():
+    try:
+        materia = Materias.query.all()
+        resultado = []
+        for m in materia:
+            resultado.append({
+                'Nombre':m.nombre,
+                'id':m.id
+            })
+        return jsonify(resultado), 200
+    except Exception as e:
+        return jsonify({'ERROR': f'Error al cargar las materias: {str(e)}'}), 500
+    
+
+@Alumnos_bp.route('/api/alumnos/grupos', methods=['GET'])
+def get_grupos():
+    try:
+        grupos = Grupos.query.all()
+        resultado = []
+        for g in grupos:
+            resultado.append({
+                'Nombre':g.grupo,
+                'id':g.id
+            })
+        return jsonify(resultado), 200
+    except Exception as e:
+        return jsonify({'ERROR': f'Error al cargar los grupos: {str(e)}'}), 500
+        
