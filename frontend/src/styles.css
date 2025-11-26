@@ -1,4 +1,116 @@
 @import "tailwindcss";
 @import "animate.css/animate.min.css";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
+@font-face {
+	font-family: "Open-Dyslexic";
+	src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* stylelint-disable-next-line at-rule-no-unknown */
 @plugin "daisyui";
+/* stylelint-disable-next-line at-rule-no-unknown */
+@plugin "daisyui/theme" {
+	name: "contrast-light";
+	default: false;
+	prefersdark: false;
+	color-scheme: light;
+
+	--color-base-100: #ffffff;
+	--color-base-200: #f4f4f5;
+	--color-base-300: #e4e4e7;
+	--color-base-content: #0a0a0a;
+	--color-primary: #0037ff;
+	--color-primary-content: #ffffff;
+	--color-secondary: #7c2dba;
+	--color-secondary-content: #ffffff;
+	--color-accent: #026f78;
+	--color-accent-content: #f8fafc;
+	--color-neutral: #1f2933;
+	--color-neutral-content: #f8fafc;
+	--color-info: #155e75;
+	--color-info-content: #e0f2fe;
+	--color-success: #166534;
+	--color-success-content: #f0fdf4;
+	--color-warning: #92400e;
+	--color-warning-content: #fffbeb;
+	--color-error: #b91c1c;
+	--color-error-content: #fef2f2;
+	--radius-selector: 0.15rem;
+	--radius-field: 0.2rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+}
+
+/* stylelint-disable-next-line at-rule-no-unknown */
+@plugin "daisyui/theme" {
+	name: "contrast-dark";
+	default: false;
+	prefersdark: false;
+	color-scheme: dark;
+
+	--color-base-100: #050505;
+	--color-base-200: #111827;
+	--color-base-300: #1f2937;
+	--color-base-content: #f9fafb;
+	--color-primary: #7dd3fc;
+	--color-primary-content: #04121f;
+	--color-secondary: #f9a8d4;
+	--color-secondary-content: #2c0419;
+	--color-accent: #fde047;
+	--color-accent-content: #1f1500;
+	--color-neutral: #0f172a;
+	--color-neutral-content: #f8fafc;
+	--color-info: #bae6fd;
+	--color-info-content: #082231;
+	--color-success: #bbf7d0;
+	--color-success-content: #052911;
+	--color-warning: #fed7aa;
+	--color-warning-content: #2f1400;
+	--color-error: #fecaca;
+	--color-error-content: #2b0b0b;
+	--radius-selector: 0.15rem;
+	--radius-field: 0.2rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+}
+
+:root {
+	--app-font-scale: 1;
+	--app-font-family-base: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--app-font-family-dyslexic: "Open-Dyslexic", "Segoe UI", sans-serif;
+	--app-font-family-current: var(--app-font-family-base);
+}
+
+html {
+	font-size: calc(16px * var(--app-font-scale));
+	font-family: var(--app-font-family-current);
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: inherit;
+}
+
+[data-high-contrast="true"] *:focus-visible {
+	outline: 3px solid currentColor;
+	outline-offset: 3px;
+}
+
+[data-high-contrast="true"] .btn,
+[data-high-contrast="true"] .input,
+[data-high-contrast="true"] .textarea,
+[data-high-contrast="true"] .select {
+	border-width: 2px;
+}

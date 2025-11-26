@@ -1,0 +1,101 @@
+<section class="max-w-3xl mx-auto px-4 py-8">
+  <div class="card bg-base-100 shadow-lg">
+    <div class="card-body space-y-8">
+      <header class="space-y-2">
+        <p class="text-sm uppercase tracking-wide text-base-content/60">Preferencias visuales</p>
+        <h1 class="card-title">Accesibilidad</h1>
+        <p class="text-base-content/70">
+          Ajusta el contraste, el tamaño de fuente y el tipo de letra para que la experiencia se adapte a tus necesidades.
+        </p>
+      </header>
+
+      <article class="space-y-4" aria-labelledby="theme-section">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p id="theme-section" class="font-semibold">Tema de contraste</p>
+            <p class="text-base-content/70">Actualmente en modo {{ theme.isDark() ? 'oscuro' : 'claro' }}.</p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="toggleTheme()"
+            [attr.aria-pressed]="theme.isDark()"
+          >
+            Cambiar a {{ nextThemeLabel() }}
+          </button>
+        </div>
+      </article>
+
+      <article class="space-y-4" aria-labelledby="high-contrast-section">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p id="high-contrast-section" class="font-semibold">Modo de alto contraste</p>
+            <p class="text-base-content/70">
+              Refuerza colores, contornos y estados de foco para maximizar la legibilidad.
+            </p>
+          </div>
+          <label class="label cursor-pointer gap-3">
+            <span class="label-text">{{ highContrastEnabled() ? 'Activado' : 'Desactivado' }}</span>
+            <input
+              type="checkbox"
+              role="switch"
+              class="toggle toggle-secondary"
+              [checked]="highContrastEnabled()"
+              (change)="onHighContrastToggle($event)"
+              aria-describedby="high-contrast-section"
+            />
+          </label>
+        </div>
+        <div class="alert alert-info" role="status">
+          Activado junto con el modo {{ theme.isDark() ? 'oscuro' : 'claro' }} para obtener {{ highContrastEnabled() ? 'el contraste más alto disponible' : 'los colores por defecto' }}.
+        </div>
+      </article>
+
+      <article class="space-y-4" aria-labelledby="font-size-section">
+        <div class="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <p id="font-size-section" class="font-semibold">Tamaño general de letra</p>
+            <p class="text-base-content/70">{{ fontScalePercent() }}% del tamaño base.</p>
+          </div>
+          <span class="badge badge-outline">{{ fontScalePercent() }}%</span>
+        </div>
+        <label class="form-control gap-2" aria-label="Desliza para ajustar el tamaño de letra">
+          <input
+            type="range"
+            class="range range-primary w-full"
+            [attr.min]="fontScaleMin"
+            [attr.max]="fontScaleMax"
+            [attr.step]="fontScaleStep"
+            [ngModel]="accessibility.fontScale()"
+            (ngModelChange)="accessibility.setFontScale($event)"
+            aria-describedby="font-size-section"
+          />
+          <div class="flex w-full justify-between text-xs px-1">
+            <span>{{ (fontScaleMin * 100) | number:'1.0-0' }}%</span>
+            <span>{{ (fontScaleMax * 100) | number:'1.0-0' }}%</span>
+          </div>
+        </label>
+      </article>
+
+      <article class="space-y-3" aria-labelledby="dyslexia-section">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p id="dyslexia-section" class="font-semibold">Tipografía para dislexia</p>
+            <p class="text-base-content/70">Cambia a una fuente con trazos reforzados para mejorar la lectura.</p>
+          </div>
+          <label class="label cursor-pointer gap-3">
+            <span class="label-text">{{ accessibility.dyslexicFont() ? 'Activada' : 'Desactivada' }}</span>
+            <input
+              type="checkbox"
+              role="switch"
+              class="toggle toggle-primary"
+              [checked]="accessibility.dyslexicFont()"
+              (change)="onDyslexicToggle($event)"
+              aria-describedby="dyslexia-section"
+            />
+          </label>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

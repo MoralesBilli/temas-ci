@@ -29,6 +29,12 @@ export const routes: Routes = [
   }
   ,
   {
+    path: 'accesibilidad',
+    loadComponent: () => import('./accessibility/accessibility-page/accessibility-page').then(c => c.AccessibilityPage),
+    title: 'Accesibilidad',
+    canActivate: [authGuard]
+  },
+  {
     path: 'profile',
     loadComponent: () => import('./profile/profile-page/profile-page').then(c => c.ProfilePage),
     title: 'Perfil',
