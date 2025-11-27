@@ -4,11 +4,13 @@ import { Injectable, effect, inject, signal } from '@angular/core';
 type Preferences = Readonly<{
   fontScale: number;
   dyslexicFont: boolean;
+  largeCursor: boolean;
 }>;
 
 const DEFAULT_PREFERENCES: Preferences = {
   fontScale: 1,
-  dyslexicFont: false
+  dyslexicFont: false,
+  largeCursor: false
 };
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +25,7 @@ export class AccessibilityPreferencesService {
 
   readonly fontScale = signal(this.initialPrefs.fontScale);
   readonly dyslexicFont = signal(this.initialPrefs.dyslexicFont);
+  readonly largeCursor = signal(this.initialPrefs.largeCursor);
 
   constructor() {
     effect(() => {
@@ -38,9 +41,15 @@ export class AccessibilityPreferencesService {
     });
 
     effect(() => {
+      const cursorLarge = this.largeCursor();
+      this.doc.documentElement.setAttribute('data-cursor-large', String(cursorLarge));
+    });
+
+    effect(() => {
       this.persistPreferences({
         fontScale: this.fontScale(),
-        dyslexicFont: this.dyslexicFont()
+        dyslexicFont: this.dyslexicFont(),
+        largeCursor: this.largeCursor()
       });
     });
   }
@@ -58,6 +67,14 @@ export class AccessibilityPreferencesService {
     this.dyslexicFont.update(current => !current);
   }
 
+  setLargeCursor(enabled: boolean): void {
+    this.largeCursor.set(enabled);
+  }
+
+  toggleLargeCursor(): void {
+    this.largeCursor.update(current => !current);
+  }
+
   private clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value));
   }
@@ -69,9 +86,11 @@ export class AccessibilityPreferencesService {
       const parsed = JSON.parse(raw);
       const fontScale = typeof parsed?.fontScale === 'number' ? parsed.fontScale : DEFAULT_PREFERENCES.fontScale;
       const dyslexicFont = typeof parsed?.dyslexicFont === 'boolean' ? parsed.dyslexicFont : DEFAULT_PREFERENCES.dyslexicFont;
+      const largeCursor = typeof parsed?.largeCursor === 'boolean' ? parsed.largeCursor : DEFAULT_PREFERENCES.largeCursor;
       return {
         fontScale: this.clamp(fontScale, this.minFontScale, this.maxFontScale),
-        dyslexicFont
+        dyslexicFont,
+        largeCursor
       };
     } catch {
       return DEFAULT_PREFERENCES;

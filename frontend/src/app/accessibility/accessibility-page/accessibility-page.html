@@ -96,6 +96,31 @@
           </label>
         </div>
       </article>
+
+      <article class="space-y-3" aria-labelledby="cursor-section">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p id="cursor-section" class="font-semibold">Cursor de alto contraste</p>
+            <p class="text-base-content/70">
+              Amplía el puntero del mouse y lo convierte en un indicador circular más visible en cualquier vista.
+            </p>
+          </div>
+          <label class="label cursor-pointer gap-3">
+            <span class="label-text">{{ largeCursorEnabled() ? 'Activado' : 'Desactivado' }}</span>
+            <input
+              type="checkbox"
+              role="switch"
+              class="toggle toggle-accent"
+              [checked]="largeCursorEnabled()"
+              (change)="onLargeCursorToggle($event)"
+              aria-describedby="cursor-section cursor-hint"
+            />
+          </label>
+        </div>
+        <p id="cursor-hint" class="text-sm text-base-content/70">
+          El cursor resaltado mantiene el modo texto en campos de entrada, pero mejora la visibilidad en botones, enlaces y menús.
+        </p>
+      </article>
     </div>
   </div>
 </section>

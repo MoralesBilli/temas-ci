@@ -22,6 +22,7 @@ export class AccessibilityPage {
   protected readonly nextThemeLabel = computed(() => this.theme.isDark() ? 'tema claro' : 'tema oscuro');
   protected readonly fontScalePercent = computed(() => Math.round(this.accessibility.fontScale() * 100));
   protected readonly highContrastEnabled = computed(() => this.theme.highContrast());
+  protected readonly largeCursorEnabled = computed(() => this.accessibility.largeCursor());
 
   constructor() {
     this.layout.title.set('Accesibilidad');
@@ -41,5 +42,11 @@ export class AccessibilityPage {
     const target = event.target as HTMLInputElement | null;
     if (!target) return;
     this.theme.setHighContrast(target.checked);
+  }
+
+  protected onLargeCursorToggle(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) return;
+    this.accessibility.setLargeCursor(target.checked);
   }
 }
