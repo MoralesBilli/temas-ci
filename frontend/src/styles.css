@@ -86,6 +86,117 @@
 	--noise: 0;
 }
 
+/* stylelint-disable-next-line at-rule-no-unknown */
+@plugin "daisyui/theme" {
+	name: "color-blind-light";
+	default: false;
+	prefersdark: false;
+	color-scheme: light;
+
+	--color-base-100: #ffffff;
+	--color-base-200: #f3f3f3;
+	--color-base-300: #e0e0e0;
+	--color-base-content: #050505;
+	--color-primary: #111111;
+	--color-primary-content: #fdfdfd;
+	--color-secondary: #2b2b2b;
+	--color-secondary-content: #fcfcfc;
+	--color-accent: #4a4a4a;
+	--color-accent-content: #f7f7f7;
+	--color-neutral: #1a1a1a;
+	--color-neutral-content: #f9f9f9;
+	--color-info: #5c5c5c;
+	--color-info-content: #f5f5f5;
+	--color-success: #3b3b3b;
+	--color-success-content: #fefefe;
+	--color-warning: #6e6e6e;
+	--color-warning-content: #f2f2f2;
+	--color-error: #212121;
+	--color-error-content: #fbfbfb;
+	--radius-selector: 0.2rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.3rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.3rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+}
+
+/* stylelint-disable-next-line at-rule-no-unknown */
+@plugin "daisyui/theme" {
+	name: "color-blind-dark";
+	default: false;
+	prefersdark: true;
+	color-scheme: dark;
+
+	--color-base-100: #050505;
+	--color-base-200: #0f0f0f;
+	--color-base-300: #1c1c1c;
+	--color-base-content: #f7f7f7;
+	--color-primary: #e6e6e6;
+	--color-primary-content: #050505;
+	--color-secondary: #cfcfcf;
+	--color-secondary-content: #0a0a0a;
+	--color-accent: #b0b0b0;
+	--color-accent-content: #050505;
+	--color-neutral: #d9d9d9;
+	--color-neutral-content: #050505;
+	--color-info: #9b9b9b;
+	--color-info-content: #050505;
+	--color-success: #bdbdbd;
+	--color-success-content: #050505;
+	--color-warning: #8a8a8a;
+	--color-warning-content: #f7f7f7;
+	--color-error: #f0f0f0;
+	--color-error-content: #050505;
+	--radius-selector: 0.2rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.3rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.3rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+}
+
+/* stylelint-disable-next-line at-rule-no-unknown */
+@plugin "daisyui/theme" {
+	name: "night";
+	default: false;
+	prefersdark: true;
+	color-scheme: dark;
+
+	--color-base-100: #1a120c;
+	--color-base-200: #241a13;
+	--color-base-300: #2f241d;
+	--color-base-content: #fdf1d5;
+	--color-primary: #f4a259;
+	--color-primary-content: #2b1200;
+	--color-secondary: #d95d39;
+	--color-secondary-content: #fff2e9;
+	--color-accent: #ffcf8f;
+	--color-accent-content: #2f1a04;
+	--color-neutral: #3c2f2f;
+	--color-neutral-content: #ffe9c7;
+	--color-info: #f2c57c;
+	--color-info-content: #2d1900;
+	--color-success: #a3c586;
+	--color-success-content: #101f09;
+	--color-warning: #ffdc99;
+	--color-warning-content: #2d1d02;
+	--color-error: #f28482;
+	--color-error-content: #2b0907;
+	--radius-selector: 0.2rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.3rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.3rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+}
+
 :root {
 	--app-font-scale: 1;
 	--app-font-family-base: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -98,7 +209,8 @@
 }
 
 :root[data-theme="dark"],
-:root[data-theme="contrast-dark"] {
+:root[data-theme="contrast-dark"],
+:root[data-theme="color-blind-dark"] {
 	--cursor-arrow-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M8 4L8 44L20 32L28 60L38 56L28 30L52 30Z' fill='%230f172a' stroke='%23f8fafc' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") 2 2, auto;
 	--cursor-arrow-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M8 4L8 44L20 32L28 60L38 56L28 30L52 30Z' fill='%231d4ed8' stroke='%23bfdbfe' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") 2 2, pointer;
 }
@@ -119,6 +231,11 @@ body {
 	cursor: var(--app-cursor-default, auto);
 }
 
+body.ai-cursor-hidden,
+body.ai-cursor-hidden * {
+	cursor: none !important;
+}
+
 a,
 button,
 [role="button"],
@@ -132,6 +249,25 @@ select {
 	cursor: var(--app-cursor-pointer, pointer);
 }
 
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.required-marker {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.15rem;
+	font-weight: 600;
+}
+
 [data-high-contrast="true"] *:focus-visible {
 	outline: 3px solid currentColor;
 	outline-offset: 3px;
@@ -142,4 +278,32 @@ select {
 [data-high-contrast="true"] .textarea,
 [data-high-contrast="true"] .select {
 	border-width: 2px;
+}
+
+[data-night-light="true"] body {
+	background-color: #1a120c;
+	color: var(--color-base-content, #fdf1d5);
+}
+
+[data-night-light="true"] body::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	background: rgba(255, 180, 120, 0.06);
+	mix-blend-mode: screen;
+	z-index: 1;
+}
+
+.accessibility-dialog-panel {
+	width: min(960px, 90vw) !important;
+	max-width: min(960px, 90vw) !important;
+	max-height: 90vh !important;
+}
+
+.accessibility-dialog-panel .cdk-dialog-container {
+	padding: 0;
+	border-radius: 1.25rem;
+	background: transparent;
+	overflow: hidden;
 }

@@ -5,8 +5,16 @@
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			<div class="form-control">
-				<label class="label"><span class="label-text">Nombre <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-				<input class="input input-bordered w-full" formControlName="nombre" placeholder="Nombre"
+				<label class="label" for="register-nombre">
+					<span class="label-text">
+						Nombre
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
+				<input id="register-nombre" class="input input-bordered w-full" formControlName="nombre" placeholder="Nombre"
 					   [class.input-error]="form.controls.nombre.touched && form.controls.nombre.invalid" />
 				@if (form.controls.nombre.touched && form.controls.nombre.invalid) {
 					<label class="label"><span class="label-text-alt text-error">Requerido</span></label>
@@ -14,8 +22,16 @@
 			</div>
 
 			<div class="form-control">
-				<label class="label"><span class="label-text">Apellido paterno <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-				<input class="input input-bordered w-full" formControlName="apellidopa" placeholder="Apellido paterno"
+				<label class="label" for="register-apellidopa">
+					<span class="label-text">
+						Apellido paterno
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
+				<input id="register-apellidopa" class="input input-bordered w-full" formControlName="apellidopa" placeholder="Apellido paterno"
 					   [class.input-error]="form.controls.apellidopa.touched && form.controls.apellidopa.invalid" />
 				@if (form.controls.apellidopa.touched && form.controls.apellidopa.invalid) {
 					<label class="label"><span class="label-text-alt text-error">Requerido</span></label>
@@ -23,8 +39,16 @@
 			</div>
 
 			<div class="form-control">
-				<label class="label"><span class="label-text">Apellido materno <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-				<input class="input input-bordered w-full" formControlName="apellidoma" placeholder="Apellido materno"
+				<label class="label" for="register-apellidoma">
+					<span class="label-text">
+						Apellido materno
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
+				<input id="register-apellidoma" class="input input-bordered w-full" formControlName="apellidoma" placeholder="Apellido materno"
 					   [class.input-error]="form.controls.apellidoma.touched && form.controls.apellidoma.invalid" />
 				@if (form.controls.apellidoma.touched && form.controls.apellidoma.invalid) {
 					<label class="label"><span class="label-text-alt text-error">Requerido</span></label>
@@ -32,8 +56,16 @@
 			</div>
 
 			<div class="form-control">
-				<label class="label"><span class="label-text">Teléfono <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-				<input class="input input-bordered w-full" formControlName="telefono" placeholder="Teléfono"
+				<label class="label" for="register-telefono">
+					<span class="label-text">
+						Teléfono
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
+				<input id="register-telefono" class="input input-bordered w-full" formControlName="telefono" placeholder="Teléfono"
 					   [class.input-error]="form.controls.telefono.touched && form.controls.telefono.invalid" />
 				@if (form.controls.telefono.touched && form.controls.telefono.invalid) {
 					<label class="label"><span class="label-text-alt text-error">Requerido o formato inválido</span></label>
@@ -41,8 +73,16 @@
 			</div>
 
 			<div class="form-control">
-				<label class="label"><span class="label-text">Correo <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-				<input class="input input-bordered w-full" formControlName="correo" placeholder="Correo"
+				<label class="label" for="register-correo">
+					<span class="label-text">
+						Correo
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
+				<input id="register-correo" class="input input-bordered w-full" formControlName="correo" placeholder="Correo"
 					   [class.input-error]="form.controls.correo.touched && form.controls.correo.invalid" />
 				@if (form.controls.correo.touched && form.controls.correo.invalid) {
 					<label class="label"><span class="label-text-alt text-error">Requerido o correo inválido</span></label>
@@ -50,8 +90,16 @@
 			</div>
 
 			<div class="form-control">
-				<label class="label"><span class="label-text">Clave (número) <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-				<input type="number" class="input input-bordered w-full" formControlName="clave" placeholder="Clave maestro"
+				<label class="label" for="register-clave">
+					<span class="label-text">
+						Clave (número)
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
+				<input id="register-clave" type="number" class="input input-bordered w-full" formControlName="clave" placeholder="Clave maestro"
 					   [class.input-error]="form.controls.clave.touched && form.controls.clave.invalid" />
 				@if (form.controls.clave.touched && form.controls.clave.invalid) {
 					<label class="label"><span class="label-text-alt text-error">Requerido (solo números)</span></label>

@@ -1,0 +1,26 @@
+<section
+  class="accessibility-dialog"
+  role="document"
+  [attr.aria-labelledby]="headingId"
+  [attr.aria-describedby]="descriptionId"
+>
+  <header class="dialog-header">
+    <div>
+      <p class="dialog-eyebrow">Centro de accesibilidad</p>
+      <p class="dialog-description" [id]="descriptionId">
+        Ajusta los controles visuales y de apoyo auditivo sin abandonar la vista actual.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-ghost btn-sm"
+      aria-label="Cerrar panel de accesibilidad"
+      (click)="close()"
+    >
+      ✕
+    </button>
+  </header>
+  <div class="dialog-body">
+    <app-accessibility-page />
+  </div>
+</section>

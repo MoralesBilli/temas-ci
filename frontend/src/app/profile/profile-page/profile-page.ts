@@ -7,6 +7,8 @@ import { computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { getProfilePhoto } from '../../core/utils/photoUtils';
 import { ToastService } from '../../core/services/toast-service';
+import { VoiceReaderService } from '../../core/services/voice-reader.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-profile-page',
@@ -18,6 +20,7 @@ import { ToastService } from '../../core/services/toast-service';
 export class ProfilePage {
   private fb = new FormBuilder();
   private readonly layout = inject(LayoutService);
+  private readonly voiceReader = inject(VoiceReaderService);
 
   get decoded() { return this.auth.decoded; }
 
@@ -56,10 +59,13 @@ export class ProfilePage {
   }, { validators: this.passwordsMatchValidator });
 
   loading = signal(false);
+  private attemptedSubmit = false;
+  private lastAnnouncedError: string | null = null;
 
 
   constructor(private auth: AuthService, private router: Router, private toast: ToastService) {
     this.layout.title.set('Perfil');
+    this.form.statusChanges.pipe(takeUntilDestroyed()).subscribe(() => this.announceFirstError());
   }
 
   logout() {
@@ -68,7 +74,14 @@ export class ProfilePage {
   }
 
   async submit() {
-    if (this.form.invalid) return this.form.markAllAsTouched();
+    if (this.form.invalid) {
+      this.attemptedSubmit = true;
+      this.form.markAllAsTouched();
+      this.announceFirstError();
+      return;
+    }
+    this.attemptedSubmit = false;
+    this.lastAnnouncedError = null;
     const { contrasena_actual, nueva_contrasena, confirmar } = this.form.value as any;
     if (nueva_contrasena !== confirmar) {
       this.toast.show('Las contraseñas no coinciden', 'error', 5000);
@@ -85,5 +98,56 @@ export class ProfilePage {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  private announceFirstError(): void {
+    const message = this.getFirstErrorMessage();
+    if (!message) {
+      if (this.form.valid) {
+        this.lastAnnouncedError = null;
+      }
+      return;
+    }
+    if (message === this.lastAnnouncedError) {
+      return;
+    }
+    this.lastAnnouncedError = message;
+    this.voiceReader.announce(message);
+  }
+
+  private getFirstErrorMessage(): string | null {
+    const actual = this.form.get('contrasena_actual');
+    if (actual && actual.invalid && (actual.touched || this.attemptedSubmit)) {
+      return 'Debes escribir tu contraseña actual.';
+    }
+
+    const nueva = this.form.get('nueva_contrasena');
+    if (nueva && nueva.invalid && (nueva.touched || this.attemptedSubmit)) {
+      if (nueva.hasError('required')) {
+        return 'Debes escribir una nueva contraseña.';
+      }
+      if (nueva.hasError('minlength')) {
+        return 'La nueva contraseña debe tener al menos 8 caracteres.';
+      }
+      if (nueva.hasError('uppercase')) {
+        return 'La nueva contraseña debe incluir al menos una letra mayúscula.';
+      }
+      if (nueva.hasError('digit')) {
+        return 'La nueva contraseña debe incluir al menos un número.';
+      }
+    }
+
+    const confirmar = this.form.get('confirmar');
+    if (confirmar && confirmar.invalid && (confirmar.touched || this.attemptedSubmit)) {
+      if (confirmar.hasError('required')) {
+        return 'Debes confirmar tu nueva contraseña.';
+      }
+    }
+
+    if (this.form.hasError('passwordMismatch') && (confirmar?.touched || this.attemptedSubmit)) {
+      return 'Las contraseñas no coinciden.';
+    }
+
+    return null;
   }
 }

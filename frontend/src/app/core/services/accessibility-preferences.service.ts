@@ -5,12 +5,16 @@ type Preferences = Readonly<{
   fontScale: number;
   dyslexicFont: boolean;
   largeCursor: boolean;
+  voiceReader: boolean;
+  aiNavigation: boolean;
 }>;
 
 const DEFAULT_PREFERENCES: Preferences = {
   fontScale: 1,
   dyslexicFont: false,
-  largeCursor: false
+  largeCursor: false,
+  voiceReader: false,
+  aiNavigation: false
 };
 
 @Injectable({ providedIn: 'root' })
@@ -26,6 +30,8 @@ export class AccessibilityPreferencesService {
   readonly fontScale = signal(this.initialPrefs.fontScale);
   readonly dyslexicFont = signal(this.initialPrefs.dyslexicFont);
   readonly largeCursor = signal(this.initialPrefs.largeCursor);
+  readonly voiceReader = signal(this.initialPrefs.voiceReader);
+  readonly aiNavigation = signal(this.initialPrefs.aiNavigation);
 
   constructor() {
     effect(() => {
@@ -46,10 +52,22 @@ export class AccessibilityPreferencesService {
     });
 
     effect(() => {
+      const voiceReaderEnabled = this.voiceReader();
+      this.doc.documentElement.setAttribute('data-voice-reader', String(voiceReaderEnabled));
+    });
+
+    effect(() => {
+      const aiNav = this.aiNavigation();
+      this.doc.documentElement.setAttribute('data-ai-navigation', String(aiNav));
+    });
+
+    effect(() => {
       this.persistPreferences({
         fontScale: this.fontScale(),
         dyslexicFont: this.dyslexicFont(),
-        largeCursor: this.largeCursor()
+        largeCursor: this.largeCursor(),
+        voiceReader: this.voiceReader(),
+        aiNavigation: this.aiNavigation()
       });
     });
   }
@@ -75,6 +93,22 @@ export class AccessibilityPreferencesService {
     this.largeCursor.update(current => !current);
   }
 
+  setVoiceReaderEnabled(enabled: boolean): void {
+    this.voiceReader.set(enabled);
+  }
+
+  toggleVoiceReader(): void {
+    this.voiceReader.update(current => !current);
+  }
+
+  setAiNavigationEnabled(enabled: boolean): void {
+    this.aiNavigation.set(enabled);
+  }
+
+  toggleAiNavigation(): void {
+    this.aiNavigation.update(current => !current);
+  }
+
   private clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value));
   }
@@ -87,10 +121,14 @@ export class AccessibilityPreferencesService {
       const fontScale = typeof parsed?.fontScale === 'number' ? parsed.fontScale : DEFAULT_PREFERENCES.fontScale;
       const dyslexicFont = typeof parsed?.dyslexicFont === 'boolean' ? parsed.dyslexicFont : DEFAULT_PREFERENCES.dyslexicFont;
       const largeCursor = typeof parsed?.largeCursor === 'boolean' ? parsed.largeCursor : DEFAULT_PREFERENCES.largeCursor;
+      const voiceReader = typeof parsed?.voiceReader === 'boolean' ? parsed.voiceReader : DEFAULT_PREFERENCES.voiceReader;
+      const aiNavigation = typeof parsed?.aiNavigation === 'boolean' ? parsed.aiNavigation : DEFAULT_PREFERENCES.aiNavigation;
       return {
         fontScale: this.clamp(fontScale, this.minFontScale, this.maxFontScale),
         dyslexicFont,
-        largeCursor
+        largeCursor,
+        voiceReader,
+        aiNavigation
       };
     } catch {
       return DEFAULT_PREFERENCES;

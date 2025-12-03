@@ -38,4 +38,11 @@ export class CalidadPage {
   protected readonly datosControl = this.calidadService.datosControl
   protected readonly getControlX = (dato: DatoControl) => dato.unidad
   protected readonly getControlY = (dato: DatoControl) => dato.calificacionPromedio
+
+  protected exportChart(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.print();
+  }
 }

@@ -1,0 +1,29 @@
+@if (visible()) {
+  <section class="ai-nav-overlay" aria-live="polite">
+    <div class="overlay-card">
+      <header class="overlay-header">
+        <div>
+          <p class="eyebrow">Piloto gestual</p>
+          <h2 class="title">Navegación asistida por IA</h2>
+        </div>
+        <button type="button" class="btn btn-ghost btn-xs" (click)="disable()">
+          Detener
+        </button>
+      </header>
+      <div class="video-shell">
+        <video #aiVideo muted playsinline autoplay aria-label="Vista previa de gestos"></video>
+      </div>
+      <p class="status-text">
+        @if (prediction()) {
+          <span>Gesto detectado: <strong>{{ prediction() }}</strong></span>
+        } @else {
+          <span>Coloca tu mano frente a la cámara para reconocer un gesto.</span>
+        }
+      </p>
+    </div>
+    <div class="ai-cursor" [style.transform]="'translate(' + cursorX() + 'px,' + cursorY() + 'px)'">
+      <span class="ai-cursor-core">IA</span>
+      <span class="ai-cursor-ring"></span>
+    </div>
+  </section>
+}

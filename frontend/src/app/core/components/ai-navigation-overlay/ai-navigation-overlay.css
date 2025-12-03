@@ -1,0 +1,117 @@
+.ai-nav-overlay {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 70;
+  pointer-events: none;
+}
+
+.overlay-card {
+  width: 240px;
+  background: color-mix(in srgb, var(--color-base-100, #fff) 90%, transparent);
+  border-radius: 1rem;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem;
+  pointer-events: auto;
+}
+
+.overlay-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.eyebrow {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(148 163 184);
+  margin: 0;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.video-shell {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.video-shell video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.status-text {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: rgb(71 85 105);
+}
+
+.status-text strong {
+  color: rgb(79 70 229);
+}
+
+.ai-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 80;
+  transform: translate(-999px, -999px);
+}
+
+.ai-cursor-core {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, #f4f4ff, #c7d2fe);
+  border-radius: 999px;
+  border: 2px solid rgba(99, 102, 241, 0.65);
+  color: #312e81;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.ai-cursor-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1px dashed rgba(99, 102, 241, 0.5);
+  animation: ai-cursor-pulse 1.5s infinite;
+}
+
+@keyframes ai-cursor-pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.9);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}

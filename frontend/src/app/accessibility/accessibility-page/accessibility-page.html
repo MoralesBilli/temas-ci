@@ -3,51 +3,37 @@
     <div class="card-body space-y-8">
       <header class="space-y-2">
         <p class="text-sm uppercase tracking-wide text-base-content/60">Preferencias visuales</p>
-        <h1 class="card-title">Accesibilidad</h1>
+        <h1 class="card-title" [attr.id]="headingId">Accesibilidad</h1>
         <p class="text-base-content/70">
           Ajusta el contraste, el tamaño de fuente y el tipo de letra para que la experiencia se adapte a tus necesidades.
         </p>
       </header>
 
       <article class="space-y-4" aria-labelledby="theme-section">
-        <div class="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <p id="theme-section" class="font-semibold">Tema de contraste</p>
-            <p class="text-base-content/70">Actualmente en modo {{ theme.isDark() ? 'oscuro' : 'claro' }}.</p>
-          </div>
-          <button
-            type="button"
-            class="btn btn-primary"
-            (click)="toggleTheme()"
-            [attr.aria-pressed]="theme.isDark()"
-          >
-            Cambiar a {{ nextThemeLabel() }}
-          </button>
+        <div>
+          <p id="theme-section" class="font-semibold">Tema visual</p>
+          <p class="text-base-content/70">
+            Elige la combinación de colores que mejor se adapte a tu vista, incluidos modos para daltonismo y luz nocturna.
+          </p>
         </div>
-      </article>
-
-      <article class="space-y-4" aria-labelledby="high-contrast-section">
-        <div class="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <p id="high-contrast-section" class="font-semibold">Modo de alto contraste</p>
-            <p class="text-base-content/70">
-              Refuerza colores, contornos y estados de foco para maximizar la legibilidad.
-            </p>
-          </div>
-          <label class="label cursor-pointer gap-3">
-            <span class="label-text">{{ highContrastEnabled() ? 'Activado' : 'Desactivado' }}</span>
-            <input
-              type="checkbox"
-              role="switch"
-              class="toggle toggle-secondary"
-              [checked]="highContrastEnabled()"
-              (change)="onHighContrastToggle($event)"
-              aria-describedby="high-contrast-section"
-            />
-          </label>
-        </div>
-        <div class="alert alert-info" role="status">
-          Activado junto con el modo {{ theme.isDark() ? 'oscuro' : 'claro' }} para obtener {{ highContrastEnabled() ? 'el contraste más alto disponible' : 'los colores por defecto' }}.
+        <div class="theme-radio-group join join-vertical md:join-horizontal">
+          @for (option of availableThemes; track option.value) {
+            <label class="btn btn-outline theme-radio join-item flex flex-col items-start gap-1"
+                   [class.btn-active]="selectedTheme() === option.value"
+                   [attr.aria-pressed]="selectedTheme() === option.value">
+              <input
+                type="radio"
+                name="theme-selector"
+                class="theme-controller sr-only"
+                [value]="option.value"
+                [checked]="selectedTheme() === option.value"
+                (change)="onThemeSelect(option.value)"
+                [attr.aria-label]="option.label"
+              />
+              <span class="text-sm font-semibold">{{ option.label }}</span>
+              <span class="text-xs text-base-content/70">{{ option.description }}</span>
+            </label>
+          }
         </div>
       </article>
 
@@ -102,7 +88,7 @@
           <div>
             <p id="cursor-section" class="font-semibold">Cursor de alto contraste</p>
             <p class="text-base-content/70">
-              Amplía el puntero del mouse y lo convierte en un indicador circular más visible en cualquier vista.
+              Amplía el puntero del mouse y lo convierte en un triángulo de alto contraste visible en cualquier vista.
             </p>
           </div>
           <label class="label cursor-pointer gap-3">
@@ -119,6 +105,68 @@
         </div>
         <p id="cursor-hint" class="text-sm text-base-content/70">
           El cursor resaltado mantiene el modo texto en campos de entrada, pero mejora la visibilidad en botones, enlaces y menús.
+        </p>
+      </article>
+
+      <article class="space-y-3" aria-labelledby="voice-reader-section">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p id="voice-reader-section" class="font-semibold">Modo lector de voz</p>
+            <p class="text-base-content/70">
+              Lee en voz alta el contenido textual sobre el que pasas el cursor y recuerda el último fragmento para evitar reinicios.
+            </p>
+          </div>
+          <label class="label cursor-pointer gap-3">
+            <span class="label-text">
+              {{ voiceReaderSupported ? (voiceReaderEnabled() ? 'Activado' : 'Desactivado') : 'No disponible' }}
+            </span>
+            <input
+              type="checkbox"
+              role="switch"
+              class="toggle toggle-info"
+              [checked]="voiceReaderEnabled()"
+              [disabled]="!voiceReaderSupported"
+              (change)="onVoiceReaderToggle($event)"
+              aria-describedby="voice-reader-section voice-reader-hint"
+            />
+          </label>
+        </div>
+        <p id="voice-reader-hint" class="text-sm text-base-content/70">
+          {{ voiceReaderSupported
+            ? 'El lector se detiene solo cuando cambias a otro texto y mantiene el último fragmento narrado en memoria.'
+            : 'Tu navegador no expone la API de voz necesaria para activar esta función.'
+          }}
+        </p>
+      </article>
+
+      <article class="space-y-3" aria-labelledby="ai-navigation-section">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p id="ai-navigation-section" class="font-semibold">Navegación asistida por IA</p>
+            <p class="text-base-content/70">
+              Activa un copiloto gestual que interpreta tus movimientos frente a la cámara con Teachable Machine.
+            </p>
+          </div>
+          <label class="label cursor-pointer gap-3">
+            <span class="label-text">
+              {{ aiNavigationSupported ? (aiNavigationEnabled() ? 'Activado' : 'Desactivado') : 'No disponible' }}
+            </span>
+            <input
+              type="checkbox"
+              role="switch"
+              class="toggle toggle-secondary"
+              [checked]="aiNavigationEnabled()"
+              [disabled]="!aiNavigationSupported"
+              (change)="onAiNavigationToggle($event)"
+              aria-describedby="ai-navigation-section ai-navigation-hint"
+            />
+          </label>
+        </div>
+        <p id="ai-navigation-hint" class="text-sm text-base-content/70">
+          {{ aiNavigationSupported
+            ? 'Se mostrará una microcámara en la esquina superior izquierda. Tus gestos (front, up, down, right, left) se registrarán y se mostrarán en la consola.'
+            : 'Tu navegador no permite acceder a la cámara o la API necesaria para este modo.'
+          }}
         </p>
       </article>
     </div>

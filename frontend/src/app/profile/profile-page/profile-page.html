@@ -35,8 +35,16 @@
 			<h3 class="font-semibold">Cambiar contraseña</h3>
 			<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" [formGroup]="form" (ngSubmit)="submit()">
 				<div class="form-control">
-					<label class="label"><span class="label-text">Contraseña actual <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-					<input type="password" class="input input-bordered" formControlName="contrasena_actual"
+					<label class="label" for="profile-current-password">
+						<span class="label-text">
+							Contraseña actual
+							<span class="required-marker">
+								<span aria-hidden="true" class="text-error">*</span>
+								<span class="sr-only">Campo requerido</span>
+							</span>
+						</span>
+					</label>
+					<input id="profile-current-password" type="password" class="input input-bordered" formControlName="contrasena_actual"
 								 [class.input-error]="form.controls.contrasena_actual.touched && form.controls.contrasena_actual.invalid" />
 					@if (form.controls.contrasena_actual.touched && form.controls.contrasena_actual.invalid) {
 						<label class="label"><span class="label-text-alt text-error">Requerido</span></label>
@@ -44,8 +52,16 @@
 				</div>
 
 						<div class="form-control">
-							<label class="label"><span class="label-text">Nueva contraseña <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-							<input type="password" class="input input-bordered" formControlName="nueva_contrasena"
+							<label class="label" for="profile-new-password">
+								<span class="label-text">
+									Nueva contraseña
+									<span class="required-marker">
+										<span aria-hidden="true" class="text-error">*</span>
+										<span class="sr-only">Campo requerido</span>
+									</span>
+								</span>
+							</label>
+							<input id="profile-new-password" type="password" class="input input-bordered" formControlName="nueva_contrasena"
 										 [class.input-error]="form.controls.nueva_contrasena.touched && form.controls.nueva_contrasena.invalid" />
 							@if (form.controls.nueva_contrasena.touched && form.controls.nueva_contrasena.invalid) {
 								<label class="label flex flex-col gap-0.5">
@@ -66,8 +82,16 @@
 						</div>
 
 						<div class="form-control">
-							<label class="label"><span class="label-text">Confirmar nueva contraseña <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
-							<input type="password" class="input input-bordered" formControlName="confirmar"
+							<label class="label" for="profile-confirm-password">
+								<span class="label-text">
+									Confirmar nueva contraseña
+									<span class="required-marker">
+										<span aria-hidden="true" class="text-error">*</span>
+										<span class="sr-only">Campo requerido</span>
+									</span>
+								</span>
+							</label>
+							<input id="profile-confirm-password" type="password" class="input input-bordered" formControlName="confirmar"
 										 [class.input-error]="(form.controls.confirmar.touched && form.controls.confirmar.invalid) || (form.controls.confirmar.touched && form.errors?.['passwordMismatch'])" />
 							@if (form.controls.confirmar.touched && (form.controls.confirmar.invalid || form.errors?.['passwordMismatch'])) {
 								<label class="label">

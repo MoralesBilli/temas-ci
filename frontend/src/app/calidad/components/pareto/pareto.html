@@ -1,5 +1,13 @@
-<canvas
-  baseChart
-  [data]="chartData()"
-  [options]="chartOptions()"
-></canvas>
+<figure class="chart-frame" [attr.aria-describedby]="hintId">
+  <canvas
+    baseChart
+    [data]="chartData()"
+    [options]="chartOptions()"
+    role="img"
+    [attr.aria-describedby]="hintId"
+  ></canvas>
+  <figcaption class="chart-hint" role="note" [id]="hintId">
+    <span class="chart-hint-pill" aria-hidden="true">Idea</span>
+    <p>{{ chartHint() }}</p>
+  </figcaption>
+</figure>

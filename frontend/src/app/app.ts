@@ -5,6 +5,9 @@ import { ToastContainer } from './core/components/toast-container/toast-containe
 import { AuthService } from './core/services/auth-service';
 import { ThemeService } from './core/services/theme-service';
 import { AccessibilityPreferencesService } from './core/services/accessibility-preferences.service';
+import { VoiceReaderService } from './core/services/voice-reader.service';
+import { AccessibilityFabComponent } from './accessibility/components/accessibility-fab/accessibility-fab';
+import { AiNavigationOverlayComponent } from './core/components/ai-navigation-overlay/ai-navigation-overlay';
 
 interface Link {
   readonly label: string;
@@ -13,7 +16,7 @@ interface Link {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastContainer],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastContainer, AccessibilityFabComponent, AiNavigationOverlayComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -22,10 +25,10 @@ export class App {
   protected readonly auth = inject(AuthService);
   private readonly themeService = inject(ThemeService);
   private readonly accessibilityPreferences = inject(AccessibilityPreferencesService);
+  private readonly voiceReader = inject(VoiceReaderService);
   protected readonly bottomNavigation = signal<Link[]>([
     { label: 'Alumnos', link: '/alumnos' },
     { label: 'Calidad', link: '/calidad' },
-    { label: 'Accesibilidad', link: '/accesibilidad' },
     { label: 'Auditoría', link: '/audit-trail' },
     { label: 'Perfil', link: '/profile' }
   ]);
@@ -36,5 +39,7 @@ export class App {
     // Ensure accessibility preferences take effect on bootstrap.
     this.accessibilityPreferences.fontScale();
     this.accessibilityPreferences.dyslexicFont();
+    // Prime the voice reader so it can hook pointer events if enabled.
+    this.voiceReader.isSupported();
   }
 }

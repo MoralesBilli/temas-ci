@@ -2,7 +2,18 @@
 	<article class="col-span-4">
 		<app-tipos-de-grafica [(graficaSeleccionada)]="graficaSeleccionada" />
 	</article>
-	<article class="col-span-8">
+  <article class="col-span-8 space-y-4">
+    <div class="flex justify-end">
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        (click)="exportChart()"
+        [disabled]="!graficaSeleccionada()"
+      >
+        <span>Exportar PDF</span>
+        <span class="sr-only">Haz click aquí para exportar la gráfica de {{ graficaSeleccionada() || 'tu selección actual' }} a PDF</span>
+      </button>
+    </div>
     @switch (graficaSeleccionada()) {
       @case ('histograma') {
         <app-histograma

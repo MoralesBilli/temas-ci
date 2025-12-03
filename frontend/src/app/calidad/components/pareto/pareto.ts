@@ -3,6 +3,8 @@ import { BaseChartDirective } from 'ng2-charts';
 import { toSortedDesc } from '../../../core/utils/arrayUtils';
 import { ChartData, ChartOptions } from 'chart.js';
 
+const createHintId = () => `pareto-hint-${Math.random().toString(36).slice(2, 10)}`;
+
 @Component({
   selector: 'app-pareto',
   imports: [BaseChartDirective],
@@ -14,6 +16,7 @@ export class Pareto<T> {
   readonly getX = input.required<(item: T) => unknown>()
   readonly getY = input.required<(item: T) => number>()
 
+  protected readonly hintId = createHintId();
   protected readonly total = computed(() =>
     this.data().reduce((acum, item) => acum + this.getY()(item), 0)
   );
@@ -109,5 +112,27 @@ export class Pareto<T> {
         }
       }
     };
+  })
+
+  protected readonly chartHint = computed(() => {
+    const dataset = toSortedDesc(this.data(), dato => this.getY()(dato));
+    const total = this.total();
+    if (!dataset.length || total === 0) {
+      return 'No hay datos para mostrar en la gráfica de Pareto.';
+    }
+
+    const puntos = dataset.map(item => ({
+      label: String(this.getX()(item)),
+      value: this.getY()(item)
+    }));
+    const acumulado = this.getAcumulatedData(dataset);
+    const top = puntos[0];
+    const topPercent = (top.value / total) * 100;
+    const target = total * 0.8;
+    const coverageIndex = acumulado.findIndex(valor => valor >= target);
+    const coverageLabel = coverageIndex >= 0 ? puntos[coverageIndex].label : puntos[puntos.length - 1]?.label;
+
+    return `Gráfica de Pareto con ${puntos.length} factores. ${top.label} aporta ${topPercent.toFixed(1)}% del total ` +
+      `de alumnos. Para cubrir el 80% de los casos debes llegar hasta ${coverageLabel}.`;
   })
 }

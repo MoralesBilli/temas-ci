@@ -4,8 +4,17 @@
 			<h2 class="card-title justify-center">Iniciar sesión</h2>
 
 			<div class="form-control">
-				<label class="label"><span class="label-text">Clave maestro <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
+				<label class="label" for="login-clave">
+					<span class="label-text">
+						Clave maestro
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
 				<input
+					id="login-clave"
 					type="number"
 					class="input input-bordered w-full"
 					formControlName="clave"
@@ -20,8 +29,17 @@
 			</div>
 
 			<div class="form-control">
-				<label class="label"><span class="label-text">Contraseña <span aria-hidden="true" class="text-error">*</span></span><span class="sr-only">(requerido)</span></label>
+				<label class="label" for="login-password">
+					<span class="label-text">
+						Contraseña
+						<span class="required-marker">
+							<span aria-hidden="true" class="text-error">*</span>
+							<span class="sr-only">Campo requerido</span>
+						</span>
+					</span>
+				</label>
 				<input
+					id="login-password"
 					type="password"
 					class="input input-bordered w-full"
 					formControlName="password"

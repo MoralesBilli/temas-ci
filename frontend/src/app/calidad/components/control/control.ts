@@ -2,10 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { ChartData } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
-const log = (something: unknown) => {
-  console.log(something)
-  return log
-}
+const createHintId = () => `control-hint-${Math.random().toString(36).slice(2, 10)}`;
 
 @Component({
   selector: 'app-control',
@@ -18,15 +15,10 @@ export class Control<T> {
   readonly getX = input.required<(item: T) => number>()
   readonly getY = input.required<(item: T) => number>()
 
-  // protected readonly avg = computed(() => this.data().reduce(
-  //   (acum, curr) => acum + this.getY()(curr), 0
-  // ) / this.data().length)
-
-  // protected stdDev = computed(() => Math.sqrt(
-  //   this.data()
-  //   .map(item => Math.pow(this.getY()(item) - this.avg(), 2))
-  //   .reduce((acum, curr) => acum + curr, 0) / (this.data().length - 1)
-  // ))
+  private readonly centralLimit = 85;
+  private readonly upperLimit = 95;
+  private readonly lowerLimit = 75;
+  protected readonly hintId = createHintId();
 
   protected readonly chartData = computed<ChartData<'line'>>(() => ({
     labels: this.data().map(item => this.getX()(item)),
@@ -37,21 +29,21 @@ export class Control<T> {
         type: 'line',
       },
       {
-        data: Array.from({ length: this.data().length }).fill(85/*this.avg()*/) as number[],
+        data: Array.from({ length: this.data().length }).fill(this.centralLimit) as number[],
         label: 'Limite de Control Central',
         type: 'line',
         pointRadius: 0,
         borderDash: [6, 4]
       },
       {
-        data: Array.from({ length: this.data().length }).fill(95/*this.avg() + 1 * this.stdDev()*/) as number[],
+        data: Array.from({ length: this.data().length }).fill(this.upperLimit) as number[],
         label: 'Limite de Control Superior',
         type: 'line',
         pointRadius: 0,
         borderDash: [6, 4]
       },
       {
-        data:  Array.from({ length: this.data().length }).fill(75/*this.avg() - 1 * this.stdDev()*/) as number[],
+        data: Array.from({ length: this.data().length }).fill(this.lowerLimit) as number[],
         label: 'Limite de Control Inferior',
         type: 'line',
         pointRadius: 0,
@@ -59,4 +51,20 @@ export class Control<T> {
       }
     ]
   }))
+
+  protected readonly chartHint = computed(() => {
+    const puntos = this.data();
+    if (!puntos.length) {
+      return 'No hay datos para mostrar en la gráfica de control.';
+    }
+
+    const valores = puntos.map(p => this.getY()(p));
+    const min = Math.min(...valores);
+    const max = Math.max(...valores);
+    const avg = valores.reduce((acum, val) => acum + val, 0) / valores.length;
+
+    return `Gráfica de control con ${puntos.length} unidades. La calificación promedio es ${avg.toFixed(1)}, ` +
+      `con valores que van de ${min} a ${max}. Los límites usados son ${this.lowerLimit} (inferior), ` +
+      `${this.centralLimit} (central) y ${this.upperLimit} (superior).`;
+  })
 }

@@ -3,7 +3,7 @@
     <div class="flex-1">
       <a class="btn btn-ghost text-xl" routerLink="/">Gestor de Alumnos</a>
     </div>
-    <div class="flex-none">
+    <div class="flex-none flex items-center gap-2">
       @if (auth.isAuthenticated()) {
         <ul class="menu menu-horizontal px-1">
           @for (item of bottomNavigation(); track item.link) {
@@ -25,5 +25,8 @@
 		<router-outlet />
 	</main>
 </div>
+
+<app-accessibility-fab></app-accessibility-fab>
+<app-ai-navigation-overlay></app-ai-navigation-overlay>
 
 <app-toast-container></app-toast-container>

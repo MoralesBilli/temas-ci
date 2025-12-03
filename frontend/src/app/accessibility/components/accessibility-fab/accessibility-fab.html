@@ -1,0 +1,40 @@
+<div class="accessibility-fab">
+  <button
+    type="button"
+    class="btn btn-primary btn-circle md:btn-lg"
+    (click)="openPanel()"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="isOpen()"
+  >
+    <span aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-accessible"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1" /><circle cx="12" cy="7.5" r=".5" fill="currentColor" /></svg>
+    </span>
+    <span class="sr-only">Abrir centro de accesibilidad</span>
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-secondary btn-circle md:btn-lg mic-button"
+    [class.btn-error]="isListening()"
+    [class.animate-pulse]="isListening()"
+    [disabled]="!speechSupported"
+    [attr.aria-pressed]="isListening()"
+    (pointerdown)="startVoiceInput($event)"
+    (pointerup)="stopVoiceInput()"
+    (pointerleave)="cancelVoiceInput()"
+    (pointercancel)="cancelVoiceInput()"
+    (keydown.space)="startVoiceInput($event)"
+    (keyup.space)="stopVoiceInput()"
+    (keydown.enter)="startVoiceInput($event)"
+    (keyup.enter)="stopVoiceInput()"
+  >
+    <span aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-microphone"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" /></svg>
+    </span>
+    <span class="sr-only">Mantén presionado para dictar una orden de voz</span>
+  </button>
+
+  @if (!speechSupported) {
+    <p class="mic-hint">El dictado por voz no está disponible en este navegador.</p>
+  }
+</div>
