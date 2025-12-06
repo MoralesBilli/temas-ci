@@ -312,34 +312,41 @@ def guardar_calificaciones(datos):
 def Guardar_Datos_grupos(datos,clave_docente):
 
     try:
-        if isinstance(datos,dict):
+        if not isinstance(datos, dict):
+            return datos
             
-            carreras = {carrera.nombre: carrera.id for carrera in Carreras.query.all()}
-            grupos = {grupo.grupo: grupo.id for grupo in Grupos.query.all()}
-            materias = {materia.nombre: materia.id for materia in Materias.query.all()}
+        carreras = {carrera.nombre: carrera.id for carrera in Carreras.query.all()}
+        grupos = {grupo.grupo: grupo.id for grupo in Grupos.query.all()}
+        materias = {materia.nombre: materia.id for materia in Materias.query.all()}
             
 
-            cambios = False
+        cambios = False
+        alumnos = {a.no_control: a for a in Alumnos.query.all()}
+        grupo_materia = {
+            (gm.id_grupo, gm.id_materia): gm
+            for gm in grupos_materias.query.all()
+        }
+        inscripciones = {
+            (i.id_grupo, i.no_control_alumno): i
+            for i in Inscripciones.query.all()
+        }
             
-            for hoja, df in  datos.items():
+        for hoja, df in  datos.items():
                
-                for _,fila in df.iterrows():
+            for _,fila in df.iterrows():
                     
 
-                    nombre_carrera = fila["Carrera"]
-                    id_carrera = carreras.get(nombre_carrera)
-                    nombre_grupo = fila["Grupo"]
-                    id_grupo = grupos.get(nombre_grupo)
-                    nombre_materia = fila["Materia"]
-                    id_materia = materias.get(nombre_materia)
+                    id_carrera = carreras.get(fila["Carrera"])
+                    id_grupo = grupos.get(fila["Grupo"])
+                    id_materia = materias.get(fila["Materia"])
                
-                    #guardado enla base de datos faltan los modelos
+                   
                     no_control = str(fila["No_Control"]).strip()
                     semestre_valido = str(int(fila["Semestre"]))
 
                     
 
-                    if not Alumnos.query.get(no_control):
+                    if no_control not in alumnos:
 
                         nuevo_alumno = Alumnos(
                             no_control=no_control,
@@ -355,38 +362,36 @@ def Guardar_Datos_grupos(datos,clave_docente):
                         cambios = True
                        
                    
-                    grupo_materia_existente = grupos_materias.query.filter_by(
-                        id_grupo = id_grupo,
-                        id_materia = id_materia
-                    ).first()
+                    key_gm = (id_grupo, id_materia)
 
-                    inscripcion_existente = Inscripciones.query.filter_by(
-                        id_grupo=id_grupo,
-                        no_control_alumno=no_control
-                    ).first()
+                    
 
-                    if not grupo_materia_existente:
-
-                        nevo_grupo_materia = grupos_materias(
-                            id_grupo = id_grupo,
-                            id_materia = id_materia,
-                            id_docente = clave_docente
+                    if key_gm not in grupo_materia:
+                        nuevo_gm = grupos_materias(
+                            id_grupo=id_grupo,
+                            id_materia=id_materia,
+                            id_docente=clave_docente
                         )
-                        db.session.add(nevo_grupo_materia)
+                        db.session.add(nuevo_gm)
+                        grupo_materia[key_gm] = nuevo_gm
                         cambios = True
+
                     else:
-                         if grupo_materia_existente.id_docente != clave_docente:
-                            grupo_materia_existente.id_docente = clave_docente
+                        gm = grupo_materia[key_gm]
+                        if gm.id_docente != clave_docente:
+                            gm.id_docente = clave_docente
                             cambios = True
                         
+                    key_ins = (id_grupo, no_control)
 
-                    if not inscripcion_existente:
-                            nueva_inscripcion = Inscripciones(
-                                id_grupo = id_grupo,
-                                no_control_alumno = no_control
-                            )
-                            db.session.add(nueva_inscripcion)
-                            cambios = True
+                    if key_ins not in inscripciones:
+                        nueva = Inscripciones(
+                            id_grupo=id_grupo,
+                            no_control_alumno=no_control
+                        )
+                        db.session.add(nueva)
+                        inscripciones[key_ins] = nueva
+                        cambios = True
                     
 
             if cambios:     
