@@ -5,9 +5,9 @@ name: primer test
 
 on:
   push:
-    branches: ["main"]
+    branches: ["updates"]
   pull_request:
-    branches: ["main"]
+    branches: ["updates"]
 
 permissions:
   contents: read
