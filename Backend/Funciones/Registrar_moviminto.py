@@ -1,5 +1,5 @@
 from Backend.Extensiones import db
-from Modelos.Modelos import Auditrail
+from Backend.Modelos.Modelos import Auditrail
 from datetime import date
 def registrar_audi(origen,accion,clave,):
     try:

@@ -4,7 +4,7 @@ from reportlab.lib.units import inch
 from datetime import datetime
 from io import BytesIO
 import textwrap
-from Modelos.Modelos import Alumnos, Inscripciones, Calificaciones
+from Backend.Modelos.Modelos import Alumnos, Inscripciones, Calificaciones
 from Backend.Extensiones import db
 
 def generar_reporte_tutoria(no_control):

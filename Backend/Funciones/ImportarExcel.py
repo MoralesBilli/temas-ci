@@ -1,6 +1,6 @@
 import pandas as pd
 from Backend.Extensiones import db
-from Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Grupos,Materias,Docente,grupos_materias
+from Backend.Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Grupos,Materias,Docente,grupos_materias
 import re
 from Funciones.Agregar_docente import crear_docente
 #Lectura del archivo excel

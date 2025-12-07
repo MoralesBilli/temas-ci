@@ -1,6 +1,6 @@
 from Backend.Extensiones import db
 from flask import jsonify, Blueprint, request
-from Modelos.Modelos import Calificaciones,FactoresPorAlumno,Inicio_Sesion,Inscripciones,Alumnos
+from Backend.Modelos.Modelos import Calificaciones,FactoresPorAlumno,Inicio_Sesion,Inscripciones,Alumnos
 from sqlalchemy import func
 from Funciones.Decodificar import token_required
 

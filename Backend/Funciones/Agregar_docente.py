@@ -1,4 +1,4 @@
-from Modelos.Modelos import Docente,Inicio_Sesion
+from Backend.Modelos.Modelos import Docente,Inicio_Sesion
 from Backend.Extensiones import db
 import bcrypt
 

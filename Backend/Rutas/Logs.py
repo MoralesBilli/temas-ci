@@ -1,4 +1,4 @@
-from Modelos.Modelos import Auditrail
+from Backend.Modelos.Modelos import Auditrail
 from flask import Blueprint, request,jsonify
 
 Logs_bp = Blueprint('logs',__name__)
