@@ -3,10 +3,10 @@ from Backend.Extensiones import db
 import bcrypt
 
 
-def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo): 
-   
-    try: 
-        
+def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo):
+
+    try:
+
         # Validar campos obligatorios
         campos = [clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo]
         if not all(campos):
@@ -23,7 +23,7 @@ def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num
             apellido_paterno=apellido_paterno,
             apellido_materno=apellido_materno,
             num_telefono=num_telefono,
-            correo=correo 
+            correo=correo
         )
         db.session.add(nuevo_docente)
         db.session.flush()  # para obtener id si es necesario
