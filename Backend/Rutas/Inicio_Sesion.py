@@ -3,7 +3,7 @@ from Backend.Modelos.Modelos import Inicio_Sesion
 import bcrypt
 import jwt
 from datetime import datetime, timedelta
-from Funciones.Decodificar import token_required
+from Backend.Funciones.Decodificar import token_required
 from Backend.Extensiones import db
 
 Inicio_sesion_bp = Blueprint('inicio_sesion', __name__)

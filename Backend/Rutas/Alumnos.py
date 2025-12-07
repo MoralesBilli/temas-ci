@@ -3,7 +3,7 @@ from Backend.Modelos.Modelos import Alumnos,FactoresDeRiesgo,FactoresPorAlumno,I
 from flask import jsonify, Blueprint, request
 from sqlalchemy.orm import joinedload
 Alumnos_bp = Blueprint('alumnos',__name__)
-from Funciones.Decodificar import token_required
+from Backend.Funciones.Decodificar import token_required
 
 
 

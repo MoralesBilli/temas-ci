@@ -1,10 +1,12 @@
-from Backend.Modelos.Modelos import Docente,Inicio_Sesion
+from Backend.Modelos.Modelos import Docente, Inicio_Sesion
 from Backend.Extensiones import db
 import bcrypt
 
-def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo):
+
+def crear_docente(clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo): 
    
-    try:
+    try: 
+        
         # Validar campos obligatorios
         campos = [clave_docente, nombre, apellido_paterno, apellido_materno, num_telefono, correo]
         if not all(campos):

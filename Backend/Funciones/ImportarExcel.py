@@ -2,7 +2,7 @@ import pandas as pd
 from Backend.Extensiones import db
 from Backend.Modelos.Modelos import Alumnos, Carreras, Calificaciones, Inscripciones, Grupos,Materias,Docente,grupos_materias
 import re
-from Funciones.Agregar_docente import crear_docente
+from Backend.Funciones.Agregar_docente import crear_docente
 #Lectura del archivo excel
 
 def importar_calificaciones(archivo,grupos,materias):

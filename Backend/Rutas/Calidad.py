@@ -2,7 +2,7 @@ from Backend.Extensiones import db
 from flask import jsonify, Blueprint, request
 from Backend.Modelos.Modelos import Calificaciones,FactoresPorAlumno,Inicio_Sesion,Inscripciones,Alumnos
 from sqlalchemy import func
-from Funciones.Decodificar import token_required
+from Backend.Funciones.Decodificar import token_required
 
 Calidad_bp = Blueprint('calidad',__name__)
 

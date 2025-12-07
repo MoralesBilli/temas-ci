@@ -1,11 +1,11 @@
 from Backend.Extensiones import db
 from flask import Blueprint, jsonify,request,send_file
-from Funciones.ImportarExcel import importar_grupos,importar_calificaciones, importar_docentes
+from Backend.Funciones.ImportarExcel import importar_grupos,importar_calificaciones, importar_docentes
 from Backend.Modelos.Modelos import Grupos, Carreras,Materias, Inicio_Sesion
 import os
-from Funciones.Registrar_moviminto import registrar_audi
-from Funciones.Decodificar import token_required
-from Funciones.Exportar_contancia import generar_reporte_tutoria
+from Backend.Funciones.Registrar_moviminto import registrar_audi
+from Backend.Funciones.Decodificar import token_required
+from Backend.Funciones.Exportar_contancia import generar_reporte_tutoria
 from io import BytesIO
 
 Import_export_bp = Blueprint('Import_export',__name__)
