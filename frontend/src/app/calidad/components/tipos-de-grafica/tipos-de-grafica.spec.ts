@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TiposDeGrafica } from './tipos-de-grafica';
 
 describe('TiposDeGrafica', () => {
@@ -8,7 +8,7 @@ describe('TiposDeGrafica', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TiposDeGrafica]
+      imports: [TiposDeGrafica,HttpClientTestingModule]
     })
     .compileComponents();
 

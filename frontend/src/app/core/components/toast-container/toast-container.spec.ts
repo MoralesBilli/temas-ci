@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ToastContainer } from './toast-container';
 
 describe('ToastContainer', () => {
@@ -8,7 +8,7 @@ describe('ToastContainer', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ToastContainer]
+      imports: [ToastContainer,HttpClientTestingModule]
     })
     .compileComponents();
 

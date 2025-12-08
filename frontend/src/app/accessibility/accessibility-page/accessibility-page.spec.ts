@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccessibilityPage } from './accessibility-page';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AccessibilityPage', () => {
   let component: AccessibilityPage;
@@ -7,7 +8,7 @@ describe('AccessibilityPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AccessibilityPage]
+      imports: [AccessibilityPage, HttpClientTestingModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AccessibilityPage);
