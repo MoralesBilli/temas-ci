@@ -16,7 +16,8 @@ def login():
         contraseña = data.get('password')
 
         inicio = Inicio_Sesion.query.filter_by(usuario=usuario).first()
-
+        if not usuario or contraseña:
+            return jsonify({"error": "Faltan campos obligatorios"}), 400
         if not inicio:
             return jsonify({'error':'Usuario no encontrado'}),401
         

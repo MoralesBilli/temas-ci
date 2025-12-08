@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Control } from './control';
 
 describe('Control', () => {
-  let component: Control;
-  let fixture: ComponentFixture<Control>;
+  let component: any;
+  let fixture: ComponentFixture<any>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -12,7 +12,7 @@ describe('Control', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Control);
+    fixture = TestBed.createComponent(Control<any>);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
