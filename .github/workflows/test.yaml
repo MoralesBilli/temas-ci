@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage
-          path: coverage/frontend/lcov.info
+          path: frontend/coverage/frontend/lcov.info
 
       - name: Build Angular
         run: npm run build --prefix frontend
