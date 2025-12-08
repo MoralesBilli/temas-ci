@@ -4,23 +4,17 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import karmaJasmine from "karma-jasmine";
-import chromeLauncher from "karma-chrome-launcher";
-import karmaCoverage from "karma-coverage";
-import jasmineHtmlReporter from "karma-jasmine-html-reporter";
-import specReporter from "karma-spec-reporter";
-
 export default function (config) {
   config.set({
     basePath: "",
-    frameworks: ["jasmine", "@angular-devkit/build-angular"], // 👈 usa @angular/build directamente
+    frameworks: ["jasmine"], // 👈 solo Jasmine, Angular se engancha solo
     plugins: [
-      karmaJasmine,
-      chromeLauncher,
-      karmaCoverage,
-      jasmineHtmlReporter,
-      specReporter
-      // 👈 ya no pongas angularDevkit ni angularBuildKarma
+      "karma-jasmine",
+      "karma-chrome-launcher",
+      "karma-coverage",
+      "karma-jasmine-html-reporter",
+      "karma-spec-reporter"
+      // 👈 ya no pongas angularDevkit ni angularBuild
     ],
     client: {
       clearContext: false

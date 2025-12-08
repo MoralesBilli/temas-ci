@@ -52,6 +52,11 @@
     "@briebug/jest-schematic": "^6.0.0",
     "@types/jest": "^29.5.14",
     "jest": "^29.7.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
     "karma-spec-reporter": "^0.0.36",
     "ts-jest": "^29.4.6",
     "typescript": "~5.9.2"
