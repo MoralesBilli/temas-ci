@@ -1,24 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Control } from './control';
 
 describe('Control', () => {
-  let component: any;
-  let fixture: ComponentFixture<any>;
+  let component: Control<{ x: number; y: number }>;
+  let fixture: ComponentFixture<Control<{ x: number; y: number }>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        Control,                 
-        HttpClientTestingModule  
-      ],
-    })
-    .compileComponents();
+      imports: [Control]
+    }).compileComponents();
 
+    fixture = TestBed.createComponent(Control<{ x: number; y: number }>);
 
-    fixture = TestBed.createComponent(Control<any>);
+    // Usar setInput para asignar valores
+    fixture.componentRef.setInput('data', [
+      { x: 1, y: 2 },
+      { x: 2, y: 3 },
+      { x: 3, y: 4 }
+    ]);
+    fixture.componentRef.setInput('getX', (item: { x: number; y: number }) => item.x);
+    fixture.componentRef.setInput('getY', (item: { x: number; y: number }) => item.y);
+
     component = fixture.componentInstance;
-    component.data = () => [1, 2, 3, 4, 5];
     fixture.detectChanges();
   });
 
