@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Pareto } from './pareto';
 
 describe('Pareto', () => {
@@ -8,7 +8,7 @@ describe('Pareto', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Pareto]
+      imports: [Pareto,  HttpClientTestingModule  ]
     })
     .compileComponents();
 

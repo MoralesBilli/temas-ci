@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Histograma } from './histograma';
 
 describe('Histograma', () => {
@@ -8,7 +8,7 @@ describe('Histograma', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Histograma]
+      imports: [Histograma, HttpClientTestingModule  ]
     })
     .compileComponents();
 
