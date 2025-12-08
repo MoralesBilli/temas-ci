@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Dispersion } from './dispersion';
 
 describe('Dispersion', () => {
-  let component: Dispersion;
-  let fixture: ComponentFixture<Dispersion>;
+  let component: any;
+  let fixture: ComponentFixture<any>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -12,7 +12,7 @@ describe('Dispersion', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Dispersion);
+    fixture = TestBed.createComponent(Dispersion<any>);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

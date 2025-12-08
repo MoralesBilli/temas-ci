@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Pareto } from './pareto';
 
 describe('Pareto', () => {
-  let component: Pareto;
-  let fixture: ComponentFixture<Pareto>;
+  let component: any;
+  let fixture: ComponentFixture<any>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -12,7 +12,7 @@ describe('Pareto', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Pareto);
+    fixture = TestBed.createComponent(Pareto<any>);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

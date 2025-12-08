@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Histograma } from './histograma';
 
 describe('Histograma', () => {
-  let component: Histograma;
-  let fixture: ComponentFixture<Histograma>;
+  let component: any;
+  let fixture: ComponentFixture<any>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -12,7 +12,7 @@ describe('Histograma', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Histograma);
+    fixture = TestBed.createComponent(Histograma<any>);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
