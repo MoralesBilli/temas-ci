@@ -1,10 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Histograma } from './histograma';
+import { Chart, registerables } from 'chart.js';
+
 
 describe('Histograma', () => {
   let component: any;
   let fixture: ComponentFixture<any>;
+
+  beforeAll(() => {
+    // Registrar controladores de Chart.js antes de correr los tests
+    Chart.register(...registerables);
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { LoginPage } from './login-page';
 import { provideHttpClient } from '@angular/common/http'; 
+import { provideRouter } from '@angular/router';
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -11,7 +12,8 @@ describe('LoginPage', () => {
     await TestBed.configureTestingModule({
       imports: [LoginPage, HttpClientTestingModule ],
        providers: [
-        provideHttpClient()   // 👈 registrar HttpClient
+        provideHttpClient(),
+        provideRouter([])
       ]
 
     })

@@ -1,9 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Control } from './control';
+import { Chart, registerables } from 'chart.js';
+
 
 describe('Control', () => {
   let component: Control<{ x: number; y: number }>;
   let fixture: ComponentFixture<Control<{ x: number; y: number }>>;
+
+  beforeAll(() => {
+    // Registrar todos los elementos de Chart.js antes de correr los tests
+    Chart.register(...registerables);
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
