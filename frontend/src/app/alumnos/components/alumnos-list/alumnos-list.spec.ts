@@ -19,19 +19,28 @@ describe('AlumnosList', () => {
     fixture = TestBed.createComponent(AlumnosList);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('alumnos', [
-      {
-        id: 1,
-        nombre: 'Juan',
-        numeroDeControl: 'A001',
-        factoresDeRiesgo: ['inasistencias']
-      },
-      {
-        id: 2,
-        nombre: 'María',
-        numeroDeControl: 'A002',
-        factoresDeRiesgo: ['bajo rendimiento', 'inasistencias']
-      }
-    ]);
+    {
+      numeroDeControl: 'A001',
+      nombre: 'Juan',
+      apellidoPaterno: 'Pérez',
+      apellidoMaterno: 'López',
+      factoresDeRiesgo: ['inasistencias']
+    },
+    {
+      numeroDeControl: 'A002',
+      nombre: 'María',
+      apellidoPaterno: 'García',
+      apellidoMaterno: 'Hernández',
+      factoresDeRiesgo: ['bajo rendimiento', 'inasistencias']
+    },
+    {
+      numeroDeControl: 'A003',
+      nombre: 'Pedro',
+      apellidoPaterno: 'Ramírez',
+      apellidoMaterno: null,
+      factoresDeRiesgo: []
+    }
+  ]);
 
     
     fixture.detectChanges();
@@ -48,7 +57,11 @@ describe('AlumnosList', () => {
 
   it('should emit alumnoSeleccionadoChange', () => {
     spyOn(component.alumnoSeleccionadoChange, 'emit');
-    const alumno = { id: 3, nombre: 'Pedro', numeroDeControl: 'A003', factoresDeRiesgo: [] };
+    const alumno = { numeroDeControl: 'A002',
+      nombre: 'María',
+      apellidoPaterno: 'García',
+      apellidoMaterno: 'Hernández',
+      factoresDeRiesgo: ['bajo rendimiento', 'inasistencias'] };
     (component as any).handleAlumnoSeleccionadoChange(alumno);
     expect(component.alumnoSeleccionadoChange.emit).toHaveBeenCalledWith(alumno);
   });
