@@ -14,8 +14,17 @@ describe('Pareto', () => {
 
     fixture = TestBed.createComponent(Pareto<any>);
     component = fixture.componentInstance;
-    component.data = () => [1, 2, 3, 4, 5];
+    
+    fixture.componentRef.setInput('data', [
+      { factor: 'A', value: 5 },
+      { factor: 'B', value: 3 },
+      { factor: 'C', value: 2 }
+    ]);
+    fixture.componentRef.setInput('getX', (item: { factor: string; value: number }) => item.factor);
+    fixture.componentRef.setInput('getY', (item: { factor: string; value: number }) => item.value);
+
     fixture.detectChanges();
+
   });
 
   it('should create', () => {

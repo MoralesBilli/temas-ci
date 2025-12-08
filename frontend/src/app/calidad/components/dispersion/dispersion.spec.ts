@@ -16,7 +16,12 @@ describe('Dispersion', () => {
 
     fixture = TestBed.createComponent(Dispersion<any>);
     component = fixture.componentInstance;
-    component.data = () => [1, 2, 3, 4, 5];
+
+    fixture.componentRef.setInput('data', [1, 2, 3, 4, 5]);
+    fixture.componentRef.setInput('getX', (item: number) => item);
+    fixture.componentRef.setInput('getY', (item: number) => item * 2); 
+
+
     fixture.detectChanges();
   });
 
