@@ -16,6 +16,7 @@ describe('Dispersion', () => {
 
     fixture = TestBed.createComponent(Dispersion<any>);
     component = fixture.componentInstance;
+    component.data = 'valor de prueba';
     fixture.detectChanges();
   });
 

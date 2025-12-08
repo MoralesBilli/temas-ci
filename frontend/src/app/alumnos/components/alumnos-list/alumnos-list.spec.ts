@@ -14,6 +14,7 @@ describe('AlumnosList', () => {
 
     fixture = TestBed.createComponent(AlumnosList);
     component = fixture.componentInstance;
+    
     fixture.detectChanges();
   });
 

@@ -14,6 +14,7 @@ describe('Pareto', () => {
 
     fixture = TestBed.createComponent(Pareto<any>);
     component = fixture.componentInstance;
+    component.data = 'valor de prueba';
     fixture.detectChanges();
   });
 

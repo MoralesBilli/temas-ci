@@ -14,6 +14,7 @@ describe('Histograma', () => {
 
     fixture = TestBed.createComponent(Histograma<any>);
     component = fixture.componentInstance;
+    component.data = 'valor de prueba';
     fixture.detectChanges();
   });
 

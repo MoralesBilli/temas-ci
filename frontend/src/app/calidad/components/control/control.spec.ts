@@ -18,6 +18,7 @@ describe('Control', () => {
 
     fixture = TestBed.createComponent(Control<any>);
     component = fixture.componentInstance;
+    component.data = 'valor de prueba';
     fixture.detectChanges();
   });
 
